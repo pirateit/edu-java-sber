@@ -1,6 +1,7 @@
 package com.inventory.main.user;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 @Data
 public class User {
 
+    @Id
     private final Integer id;
 
     @NotBlank
@@ -21,10 +23,9 @@ public class User {
     private String firstName;
 
     @NotBlank
-    @Size(min = 5, max = 62)
+    @Size(min = 5, max = 100)
     private String email;
 
-    @NotBlank
     @Digits(integer = 11, fraction = 0)
     private Long phone;
 
@@ -35,7 +36,7 @@ public class User {
     private Integer locationId;
 
     @NotBlank
-    private final LocalDate createdAt = LocalDate.now();
+    private LocalDate createdAt = LocalDate.now();
 
     private LocalDate deletedAt;
 

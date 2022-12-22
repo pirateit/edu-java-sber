@@ -1,29 +1,46 @@
 package com.inventory.main.location;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @Slf4j
-@Controller
+@RestController
 @RequestMapping("/api/locations")
 public class LocationController {
 
     private final LocationRepository locationRepo;
 
-    public LocationRepository(LocationRepository locationRepo) {
+    @Autowired
+    public LocationController(LocationRepository locationRepo) {
         this.locationRepo = locationRepo;
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Location> findOne(@PathVariable("id") Integer id) {
+        Optional<Location> location = locationRepo.findById(id);
+
+        if (location.isPresent()) {
+            return new ResponseEntity<>(location.get(), HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
+
     @PostMapping
-    public void create(@Valid Location location, Errors errors) {
+    public Location create(@Valid Location location, Errors errors) {
         if (errors.hasErrors()) {
             log.error("locations POST validation error");
-            System.out.println("locations POST validation error");
+
+            return null;
         }
+
+        return locationRepo.save(location);
     }
 }
