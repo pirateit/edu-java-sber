@@ -1,4 +1,4 @@
-package com.inventory.main;
+package com.inventory.main.user;
 
 import lombok.Data;
 

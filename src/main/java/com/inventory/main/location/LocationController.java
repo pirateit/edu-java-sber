@@ -1,4 +1,4 @@
-package com.inventory.main;
+package com.inventory.main.location;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -12,6 +12,12 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping("/api/locations")
 public class LocationController {
+
+    private final LocationRepository locationRepo;
+
+    public LocationRepository(LocationRepository locationRepo) {
+        this.locationRepo = locationRepo;
+    }
 
     @PostMapping
     public void create(@Valid Location location, Errors errors) {
