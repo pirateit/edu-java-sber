@@ -33,6 +33,20 @@ public class LocationController {
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping("/{id}/children")
+    public Iterable<Location> findChildrenTree(@PathVariable("id") Integer id) {
+        Iterable<Location> locations = locationRepo.findChildrenById(id);
+
+        return locations;
+    }
+
+    @GetMapping("/{id}/parents")
+    public Iterable<Location> findParentsTree(@PathVariable("id") Integer id) {
+        Iterable<Location> locations = locationRepo.findParentsById(id);
+
+        return locations;
+    }
+
     @PostMapping
     public Location create(@Valid Location location, Errors errors) {
         if (errors.hasErrors()) {

@@ -1,3 +1,5 @@
+BEGIN;
+
 CREATE TABLE IF NOT EXISTS locations (
    id serial PRIMARY KEY,
    title varchar(50) NOT NULL,
@@ -15,6 +17,7 @@ CREATE TABLE IF NOT EXISTS users (
    phone bigint UNIQUE NOT NULL,
    password varchar NOT NULL,
    location_id int NOT NULL,
+   is_active boolean NOT NULL DEFAULT true;
    created_at timestamptz NOT NULL,
    deleted_at timestamptz DEFAULT NULL
 );
@@ -23,3 +26,5 @@ ALTER TABLE locations ADD CONSTRAINT locations_parent_id FOREIGN KEY (parent_id)
 ALTER TABLE locations ADD CONSTRAINT locations_responsible_user_id FOREIGN KEY (responsible_user_id) REFERENCES users (id);
 
 ALTER TABLE users ADD CONSTRAINT users_location_id FOREIGN KEY (location_id) REFERENCES locations (id);
+
+COMMIT;
