@@ -3,24 +3,24 @@ BEGIN;
 DELETE FROM locations;
 DELETE FROM users;
 
-INSERT INTO locations (id, title, parent_id, depth, responsible_user_id, created_at, deleted_at) VALUES
-    (1, 'Моя компания', NULL, NULL, NULL, now(), NULL),
-    (2, 'Москва', 1, 1, NULL, now(), NULL),
-    (3, 'Краснодар', 1, 1, NULL, now(), NULL),
-    (4, 'Волгоград', 1, 1, NULL, now(), NULL),
-    (5, 'Офис на ул. Ленина', 2, 2, NULL, now(), NULL),
-    (6, 'Склад на пр. Мира', 2, 2, NULL, now(), NULL),
-    (7, 'Магазин на Сапрунова', 3, 2, NULL, now(), NULL),
-    (8, 'Магазин на Исторической', 4, 2, NULL, now(), NULL);
+INSERT INTO locations (id, title, parent_id, depth, responsible_user_id) VALUES
+    (1, 'Моя компания', NULL, NULL, NULL),
+    (2, 'Москва', 1, 1, NULL),
+    (3, 'Краснодар', 1, 1, NULL),
+    (4, 'Волгоград', 1, 1, NULL),
+    (5, 'Офис на ул. Ленина', 2, 2, NULL),
+    (6, 'Склад на пр. Мира', 2, 2, NULL),
+    (7, 'Магазин на Сапрунова', 3, 2, NULL),
+    (8, 'Магазин на Исторической', 4, 2);
 
-INSERT INTO users (id, last_name, first_name, email, phone, password, location_id, is_active, role, created_at, deleted_at) VALUES
-    (1, 'Летавина', 'Елизавета', 'elizaveta2042@ya.ru', 79818313615, '1234', 1, true, 'OWNER', now(), NULL),
-    (2, 'Коленко', 'Афанасий', 'afanasiy18011985@mail.ru', 79798435867, '1234', 2, true, 'USER', now(), NULL),
-    (3, 'Северинов', 'Василий', 'vasiliy16011990@yandex.ru', 79589027647, '1234', 5, true, 'USER', now(), NULL),
-    (4, 'Есаулов', 'Никита', 'nikita91@ya.ru', 79592873253, '1234', 5, true, 'USER', now(), NULL),
-    (5, 'Куняев', 'Даниил', 'daniil6777@mail.ru', 79529038435, '1234', 6, true, 'USER', now(), NULL),
-    (6, 'Блаженова', 'Виктория', 'viktoriya5412@mail.ru', 79591498936, '1234', 7, true, 'USER', now(), NULL),
-    (7, 'Островерхова', 'Катерина', 'katerina1969@ya.ru', 79138231819, '1234', 8, true, 'USER', now(), NULL);
+INSERT INTO users (id, last_name, first_name, email, phone, password, location_id, is_active, role) VALUES
+    (1, 'Летавина', 'Елизавета', 'elizaveta2042@ya.ru', 79818313615, '1234', 1, true, 'OWNER'),
+    (2, 'Коленко', 'Афанасий', 'afanasiy18011985@mail.ru', 79798435867, '1234', 2, true, 'USER'),
+    (3, 'Северинов', 'Василий', 'vasiliy16011990@yandex.ru', 79589027647, '1234', 5, true, 'USER'),
+    (4, 'Есаулов', 'Никита', 'nikita91@ya.ru', 79592873253, '1234', 5, true, 'USER'),
+    (5, 'Куняев', 'Даниил', 'daniil6777@mail.ru', 79529038435, '1234', 6, true, 'USER'),
+    (6, 'Блаженова', 'Виктория', 'viktoriya5412@mail.ru', 79591498936, '1234', 7, true, 'USER'),
+    (7, 'Островерхова', 'Катерина', 'katerina1969@ya.ru', 79138231819, '1234', 8, true, 'USER');
 
 UPDATE locations SET responsible_user_id = 1 WHERE id = 1;
 UPDATE locations SET responsible_user_id = 2 WHERE id = 2;

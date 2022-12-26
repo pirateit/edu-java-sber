@@ -1,5 +1,7 @@
 package com.inventory.main.item;
 
+import com.inventory.main.location.Location;
+import com.inventory.main.movement.Coordination;
 import com.inventory.main.movement.Movement;
 import lombok.*;
 
@@ -8,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Set;
 
 @Data
 @Entity
@@ -46,5 +49,16 @@ public class Item {
 
     @Column(name = "deleted_at")
     private Timestamp deletedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "location_id")
+    private Location location;
+
+    @OneToMany(mappedBy = "item")
+    private Set<Movement> movements;
 
 }

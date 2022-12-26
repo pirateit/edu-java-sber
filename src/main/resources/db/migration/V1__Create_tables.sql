@@ -49,10 +49,13 @@ CREATE TABLE IF NOT EXISTS items (
 
 CREATE TABLE IF NOT EXISTS movements (
     id serial PRIMARY KEY,
+    type varchar(35) NOT NULL,
     item_id int NOT NULL,
     quantity int NOT NULL,
     location_from_id int NOT NULL,
     location_to_id int NOT NULL,
+    status varchar(35) NOT NULL,
+    comment varchar(255) DEFAULT NULL,
     created_at timestamptz NOT NULL DEFAULT now()
 );
 
@@ -60,7 +63,8 @@ CREATE TABLE IF NOT EXISTS coordinations (
     movement_id int NOT NULL,
     subject_id int NOT NULL,
     chief_id int NOT NULL,
-    created_at timestamptz NOT NULL DEFAULT now()
+    created_at timestamptz NOT NULL DEFAULT now(),
+    PRIMARY KEY (movement_id, subject_id, chief_id)
 );
 
 ALTER TABLE locations ADD CONSTRAINT locations_parent_id FOREIGN KEY (parent_id) REFERENCES locations (id);
@@ -78,7 +82,6 @@ ALTER TABLE movements ADD CONSTRAINT movements_location_from_id FOREIGN KEY (loc
 ALTER TABLE movements ADD CONSTRAINT movements_location_to_id FOREIGN KEY (location_to_id) REFERENCES locations (id);
 
 ALTER TABLE coordinations ADD CONSTRAINT movement_id FOREIGN KEY (movement_id) REFERENCES movements (id);
-ALTER TABLE coordinations ADD CONSTRAINT subject_id FOREIGN KEY (subject_id) REFERENCES users (id);
 ALTER TABLE coordinations ADD CONSTRAINT chief_id FOREIGN KEY (chief_id) REFERENCES users (id);
 
 COMMIT;

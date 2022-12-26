@@ -18,20 +18,21 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class Coordination {
 
-    @Id
-    private CoordinationKey id;
+    @Column(name = "movement_id")
+    private Integer movementId;
+
+    @Column(name = "chief_user_id")
+    private Integer chiefUserId;
 
     @Column(name = "created_at")
     private final Timestamp createdAt = new Timestamp(new Date().getTime());
 
     @ManyToOne
-    @MapsId("movementId")
     @JoinColumn(name = "movement_id")
     private Movement movement;
 
     @ManyToOne
-    @MapsId("subjectId")
-    @JoinColumn(name = "subject_id")
-    private User subject;
+    @JoinColumn(name = "chief_id")
+    private User chief;
 
 }

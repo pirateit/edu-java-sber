@@ -1,16 +1,16 @@
 package com.inventory.main.location;
 
+import com.inventory.main.item.Item;
+import com.inventory.main.movement.Movement;
 import com.inventory.main.user.User;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 @Data
 @Table(name = "locations")
@@ -40,6 +40,17 @@ public class Location {
     @Column(name = "deleted_at")
     private Timestamp deletedAt;
 
-    private List<User> users;
+    @ManyToOne
+    @JoinColumn(name = "responsible_user_id")
+    private User responsibleUser;
+
+    @OneToMany(mappedBy = "location")
+    private Set<Item> items;
+
+    @OneToOne(mappedBy = "locationFrom")
+    private Movement movementFrom;
+
+    @OneToOne(mappedBy = "locationTo")
+    private Movement movementTo;
 
 }

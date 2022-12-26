@@ -1,5 +1,6 @@
 package com.inventory.main.user;
 
+import com.inventory.main.movement.Coordination;
 import com.inventory.main.movement.Movement;
 import lombok.*;
 
@@ -50,6 +51,7 @@ public class User {
     private Boolean isActive = true;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
 
     @Column(name = "created_at")
@@ -88,13 +90,14 @@ public class User {
 //        return this.isActive;
 //    }
 
-    @ManyToMany
-    @JoinTable(
-            name = "coordinations",
-            joinColumns = @JoinColumn(name = "subject_id"),
-            inverseJoinColumns = @JoinColumn(name = "movement_id")
-    )
-    Set<Movement> movements;
+    @OneToMany(mappedBy = "responsibleUser")
+    private Set<Coordination> locations;
+
+    @OneToMany(mappedBy = "chief")
+    private Set<Coordination> coordinations;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Movement> movements;
 
     public enum Role {
         OWNER, ADMIN, USER

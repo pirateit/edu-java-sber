@@ -4,8 +4,10 @@ import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import java.util.Set;
 
 @Data
 @Table(name = "categories")
@@ -26,5 +28,8 @@ public class Category {
     private Integer parentId;
 
     private Integer depth;
+
+    @OneToMany(mappedBy = "category")
+    private Set<Item> items;
 
 }
