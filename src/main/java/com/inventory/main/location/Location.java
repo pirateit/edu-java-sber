@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
 
 import javax.validation.constraints.NotBlank;
@@ -42,6 +43,7 @@ public class Location {
     @Column("deleted_at")
     private Timestamp deletedAt;
 
+    @MappedCollection(keyColumn = "location_id")
     private List<User> users;
 
 //    public Location(

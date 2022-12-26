@@ -2,11 +2,12 @@ package com.inventory.main.location;
 
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+@Repository
 public interface LocationRepository extends CrudRepository<Location, Integer> {
 
     Iterable<Location> findAll();
