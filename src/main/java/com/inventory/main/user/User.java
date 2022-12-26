@@ -1,38 +1,33 @@
 package com.inventory.main.user;
 
+import com.inventory.main.movement.Movement;
 import lombok.*;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.*;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 
 @Data
-@Table("users")
+@Entity
+@Table(name = "users")
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
-//@RequiredArgsConstructor
-public class User implements UserDetails {
+@NoArgsConstructor
+@RequiredArgsConstructor
+public class User {
 
     @Id
     private Integer id;
 
-    @Column("last_name")
+    @Column(name = "last_name")
     @NotBlank
     @Size(min = 2, max = 35)
     private String lastName;
 
-    @Column("first_name")
+    @Column(name = "first_name")
     @NotBlank
     @Size(min = 2, max = 35)
     private String firstName;
@@ -47,48 +42,62 @@ public class User implements UserDetails {
     @NotBlank
     private String password;
 
-    @Column("location_id")
+    @Column(name = "location_id")
     @NotBlank
     private Integer locationId;
 
-    @Column("is_active")
+    @Column(name = "is_active")
     private Boolean isActive = true;
 
-    @Column("created_at")
-    @NotBlank
-    private Timestamp createdAt = new Timestamp(new Date().getTime());
+    @Column
+    private Role role = Role.USER;
 
-    @Column("deleted_at")
+    @Column(name = "created_at")
+    private final Timestamp createdAt = new Timestamp(new Date().getTime());
+
+    @Column(name = "deleted_at")
     private Timestamp deletedAt;
 
-    @Override
-    public String getUsername() {
-        return this.email;
-    }
+//    @Override
+//    public String getUsername() {
+//        return this.email;
+//    }
+//
+//    @Override
+//    public Collection<? extends GrantedAuthority> getAuthorities() {
+//        return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
+//    }
+//
+//    @Override
+//    public boolean isAccountNonExpired() {
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean isAccountNonLocked() {
+//        return this.isActive;
+//    }
+//
+//    @Override
+//    public boolean isCredentialsNonExpired() {
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean isEnabled() {
+//        return this.isActive;
+//    }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
-    }
+    @ManyToMany
+    @JoinTable(
+            name = "coordinations",
+            joinColumns = @JoinColumn(name = "subject_id"),
+            inverseJoinColumns = @JoinColumn(name = "movement_id")
+    )
+    Set<Movement> movements;
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return this.isActive;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return this.isActive;
+    public enum Role {
+        OWNER, ADMIN, USER
     }
 
 }

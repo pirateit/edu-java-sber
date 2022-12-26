@@ -1,15 +1,11 @@
 package com.inventory.main.location;
 
 import com.inventory.main.user.User;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.MappedCollection;
-import org.springframework.data.relational.core.mapping.Table;
+import lombok.*;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
@@ -19,8 +15,8 @@ import java.util.List;
 @Data
 @Table(name = "locations")
 @AllArgsConstructor
-// TODO: What is "force" flag?
-@NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
+@NoArgsConstructor
+@RequiredArgsConstructor
 public class Location {
 
     @Id
@@ -30,35 +26,20 @@ public class Location {
     @Size(min = 2, max = 50)
     private String title;
 
-    @Column("parent_id")
+    @Column(name = "parent_id")
     private Integer parentId;
 
-    @Column("responsible_user_id")
+    private Integer depth;
+
+    @Column(name = "responsible_user_id")
     private Integer responsibleUserId;
 
-    @Column("created_at")
-    @NotBlank
-    private Timestamp createdAt = new Timestamp(new Date().getTime());
+    @Column(name = "created_at")
+    private final Timestamp createdAt = new Timestamp(new Date().getTime());
 
-    @Column("deleted_at")
+    @Column(name = "deleted_at")
     private Timestamp deletedAt;
 
-    @MappedCollection(keyColumn = "location_id")
     private List<User> users;
-
-//    public Location(
-//            Integer id,
-//            String title,
-//            Integer parentId,
-//            Integer responsibleUserId,
-//            Timestamp createdAt,
-//            Timestamp deletedAt) {
-//        this.id = id;
-//        this.title = title;
-//        this.parentId = parentId;
-//        this.responsibleUserId = responsibleUserId;
-//        this.createdAt = createdAt;
-//        this.deletedAt = deletedAt;
-//    }
 
 }
