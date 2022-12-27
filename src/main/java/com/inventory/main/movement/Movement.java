@@ -12,13 +12,14 @@ import java.util.Date;
 import java.util.Set;
 
 @Data
+@Entity
 @Table(name = "movements")
 @AllArgsConstructor
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class Movement {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Enumerated(EnumType.STRING)
@@ -33,11 +34,11 @@ public class Movement {
     @NotBlank
     private Integer quantity;
 
-    @Column(name = "location_from")
+    @Column(name = "location_from_id")
     @NotBlank
     private Integer locationFrom;
 
-    @Column(name = "location_to")
+    @Column(name = "location_to_id")
     @NotBlank
     private Integer locationTo;
 
@@ -59,19 +60,19 @@ public class Movement {
     private Set<Coordination> coordinations;
 
     @ManyToOne
-    @JoinColumn(name = "requested_user_id")
+    @JoinColumn(name = "requested_user_id", insertable = false, updatable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "item_id")
+    @JoinColumn(name = "item_id", insertable = false, updatable = false)
     private Item item;
 
-    @OneToOne
-    @JoinColumn(name = "location_from")
+    @ManyToOne
+    @JoinColumn(name = "location_from_id", insertable = false, updatable = false)
     private Location LocationFrom;
 
-    @OneToOne
-    @JoinColumn(name = "location_to")
+    @ManyToOne
+    @JoinColumn(name = "location_to_id", insertable = false, updatable = false)
     private Location LocationTo;
 
     public enum Type {

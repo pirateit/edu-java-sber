@@ -1,5 +1,6 @@
 package com.inventory.main.user;
 
+import com.inventory.main.location.Location;
 import com.inventory.main.movement.Coordination;
 import com.inventory.main.movement.Movement;
 import lombok.*;
@@ -17,10 +18,10 @@ import java.util.Set;
 @Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class User {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "last_name")
@@ -91,7 +92,7 @@ public class User {
 //    }
 
     @OneToMany(mappedBy = "responsibleUser")
-    private Set<Coordination> locations;
+    private Set<Location> locations;
 
     @OneToMany(mappedBy = "chief")
     private Set<Coordination> coordinations;

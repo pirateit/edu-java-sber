@@ -1,7 +1,6 @@
 package com.inventory.main.item;
 
 import com.inventory.main.location.Location;
-import com.inventory.main.movement.Coordination;
 import com.inventory.main.movement.Movement;
 import lombok.*;
 
@@ -21,10 +20,10 @@ import java.util.Set;
 })
 @AllArgsConstructor
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class Item {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Size(max = 4)
@@ -38,11 +37,11 @@ public class Item {
 
     private Integer quantity = 1;
 
-    @Column(name = "category_id")
-    private Integer categoryId;
+//    @Column(name = "category_id")
+//    private Integer categoryId;
 
-    @Column(name = "location_id")
-    private Integer locationId;
+//    @Column(name = "location_id")
+//    private Integer locationId;
 
     @Column(name = "created_at")
     private final Timestamp createdAt = new Timestamp(new Date().getTime());

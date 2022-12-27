@@ -2,21 +2,19 @@ package com.inventory.main.item;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.Set;
 
 @Data
+@Entity
 @Table(name = "categories")
 @AllArgsConstructor
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class Category {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @NotBlank

@@ -13,13 +13,14 @@ import java.util.Date;
 import java.util.Set;
 
 @Data
+@Entity
 @Table(name = "locations")
 @AllArgsConstructor
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class Location {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @NotBlank
@@ -31,8 +32,8 @@ public class Location {
 
     private Integer depth;
 
-    @Column(name = "responsible_user_id")
-    private Integer responsibleUserId;
+//    @Column(name = "responsible_user_id")
+//    private Integer responsibleUserId;
 
     @Column(name = "created_at")
     private final Timestamp createdAt = new Timestamp(new Date().getTime());
@@ -47,10 +48,10 @@ public class Location {
     @OneToMany(mappedBy = "location")
     private Set<Item> items;
 
-    @OneToOne(mappedBy = "locationFrom")
-    private Movement movementFrom;
+    @OneToMany(mappedBy = "locationFrom")
+    private Set<Movement> movementsFrom;
 
-    @OneToOne(mappedBy = "locationTo")
-    private Movement movementTo;
+    @OneToMany(mappedBy = "locationTo")
+    private Set<Movement> movementsTo;
 
 }

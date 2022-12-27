@@ -3,11 +3,11 @@ BEGIN;
 CREATE TABLE IF NOT EXISTS locations (
     id serial PRIMARY KEY,
     title varchar(50) NOT NULL,
-    parent_id int DEFAULT NULL,
-    depth int DEFAULT NULL,
-    responsible_user_id int DEFAULT NULL,
+    parent_id int,
+    depth int,
+    responsible_user_id int,
     created_at timestamptz NOT NULL DEFAULT now(),
-    deleted_at timestamptz DEFAULT NULL
+    deleted_at timestamptz
 );
 
 CREATE TABLE IF NOT EXISTS users (
@@ -21,30 +21,30 @@ CREATE TABLE IF NOT EXISTS users (
     role varchar(35) NOT NULL DEFAULT 'USER',
     is_active boolean NOT NULL DEFAULT TRUE,
     created_at timestamptz NOT NULL DEFAULT now(),
-    deleted_at timestamptz DEFAULT NULL
+    deleted_at timestamptz
 );
 
 CREATE TABLE IF NOT EXISTS categories (
     id serial PRIMARY KEY,
     name varchar NOT NULL,
     prefix varchar(4) UNIQUE DEFAULT NULL,
-    parent_id int DEFAULT NULL,
-    depth int DEFAULT NULL,
+    parent_id int,
+    depth int,
     created_at timestamptz NOT NULL DEFAULT now(),
-    deleted_at timestamptz DEFAULT NULL
+    deleted_at timestamptz
 );
 
 CREATE TABLE IF NOT EXISTS items (
     id serial PRIMARY KEY,
-    prefix varchar(4),
+    prefix varchar(4) DEFAULT '',
     number bigint NOT NULL,
     title varchar(255) NOT NULL,
     quantity int NOT NULL,
     category_id int NOT NULL,
     location_id int NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now(),
-    deleted_at timestamptz DEFAULT NULL,
-    UNIQUE NULLS NOT DISTINCT (prefix, number)
+    deleted_at timestamptz,
+    UNIQUE (prefix, number)
 );
 
 CREATE TABLE IF NOT EXISTS movements (
@@ -55,16 +55,14 @@ CREATE TABLE IF NOT EXISTS movements (
     location_from_id int NOT NULL,
     location_to_id int NOT NULL,
     status varchar(35) NOT NULL,
-    comment varchar(255) DEFAULT NULL,
+    comment varchar(255),
     created_at timestamptz NOT NULL DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS coordinations (
     movement_id int NOT NULL,
-    subject_id int NOT NULL,
     chief_id int NOT NULL,
-    created_at timestamptz NOT NULL DEFAULT now(),
-    PRIMARY KEY (movement_id, subject_id, chief_id)
+    created_at timestamptz NOT NULL DEFAULT now()
 );
 
 ALTER TABLE locations ADD CONSTRAINT locations_parent_id FOREIGN KEY (parent_id) REFERENCES locations (id);

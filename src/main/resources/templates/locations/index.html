@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}"></title>
+</head>
+<body>
+<div th:each="location : ${wrap}">
+    <span th:text="${location.name}"></span><br/>
+</div>
+</body>
+</html>

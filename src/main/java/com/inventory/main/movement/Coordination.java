@@ -4,7 +4,6 @@ import com.inventory.main.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -15,24 +14,17 @@ import java.util.Date;
 @Table(name = "coordinations")
 @AllArgsConstructor
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class Coordination {
 
-    @Column(name = "movement_id")
-    private Integer movementId;
-
-    @Column(name = "chief_user_id")
-    private Integer chiefUserId;
-
-    @Column(name = "created_at")
-    private final Timestamp createdAt = new Timestamp(new Date().getTime());
+    @EmbeddedId
+    private CoordinationKey id;
 
     @ManyToOne
-    @JoinColumn(name = "movement_id")
+    @JoinColumn(name = "movement_id", insertable = false, updatable = false)
     private Movement movement;
 
     @ManyToOne
-    @JoinColumn(name = "chief_id")
+    @JoinColumn(name = "chief_id", insertable = false, updatable = false)
     private User chief;
 
 }
