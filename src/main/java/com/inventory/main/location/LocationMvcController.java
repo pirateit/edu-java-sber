@@ -12,10 +12,15 @@ import java.security.Principal;
 @RequestMapping("/locations")
 public class LocationMvcController {
 
-    @GetMapping("/")
+    @GetMapping
     public String getLocations(Principal principal) {
         return "locations/index";
 //        return principal != null ? "locations/index" : "login";
+    }
+
+    @GetMapping("/create")
+    public String getLocationCreate() {
+        return "locations/create";
     }
 
 }
