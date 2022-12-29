@@ -2,18 +2,19 @@ package com.inventory.main.location;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface LocationRepository extends CrudRepository<Location, Integer> {
 
+    @Override
+    @Query(value = "SELECT * FROM locations WHERE deleted_at IS NULL ORDER BY parent_id ASC NULLS FIRST, title ASC;", nativeQuery = true)
+    Iterable<Location> findAll();
+
 //    @Query("WITH RECURSIVE rectree AS (" +
 //            "SELECT * " +
 //            "FROM locations " +
-//            "WHERE id = :id " +
+//            "WHERE id = 1 " +
 //            "UNION ALL " +
 //            "SELECT t.* " +
 //            "FROM locations t " +

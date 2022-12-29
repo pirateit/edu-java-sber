@@ -1,5 +1,7 @@
 package com.inventory.main.location;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.inventory.main.item.Item;
 import com.inventory.main.movement.Movement;
 import com.inventory.main.user.User;
@@ -8,6 +10,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Set;
@@ -15,7 +18,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "locations")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 @AllArgsConstructor
 public class Location {
 
@@ -27,7 +30,7 @@ public class Location {
     @Size(min = 2, max = 50)
     private String title;
 
-    @Column(name = "parent_id")
+    @Column(name = "parent_id", insertable = false, updatable = false)
     private Integer parentId;
 
     private Integer depth;
@@ -36,7 +39,7 @@ public class Location {
     private Integer responsibleUserId;
 
     @Column(name = "created_at")
-    private final Timestamp createdAt = new Timestamp(new Date().getTime());
+    private Timestamp createdAt = new Timestamp(new Date().getTime());
 
     @Column(name = "deleted_at")
     private Timestamp deletedAt;
@@ -44,9 +47,17 @@ public class Location {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "responsible_user_id", insertable = false, updatable = false)
     private User responsibleUser;
+//
+//    @OneToMany(mappedBy = "parentLocation")
+//    @JsonIgnore
+//    private Set<Location> parents;
+//
+//    @ManyToOne
+//    @JoinColumn(name = "parent_id", insertable = false, updatable = false)
+//    private Location parentLocation;
 
-    @OneToMany(mappedBy = "location")
-    private Set<Item> items;
+//    @OneToMany(mappedBy = "location")
+//    private Set<Item> items;
 
     @OneToMany(mappedBy = "locationFrom")
     private Set<Movement> movementsFrom;

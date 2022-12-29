@@ -39,8 +39,11 @@ public class LocationMvcController {
     public String getLocationCreate(Model model) {
         model.addAttribute("title", "Добавление локации");
         Iterable<Location> locations = locationRepo.findAll();
-        model.addAttribute("locations", "");
+        model.addAttribute("locations", locations);
         System.out.println(locations);
+        locations.forEach(location -> {
+            System.out.println(location);
+        });
 
         return "locations/create";
     }

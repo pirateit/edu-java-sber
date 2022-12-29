@@ -24,7 +24,7 @@ public class Coordination {
     private Movement movement;
 
     @ManyToOne
-    @JoinColumn(name = "chief_id", insertable = false, updatable = false)
+    @JoinColumn(name = "chief_user_id", insertable = false, updatable = false)
     private User chief;
 
 }

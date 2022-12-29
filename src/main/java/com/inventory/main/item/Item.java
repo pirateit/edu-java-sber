@@ -1,5 +1,6 @@
 package com.inventory.main.item;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.inventory.main.location.Location;
 import com.inventory.main.movement.Movement;
 import lombok.*;
@@ -53,9 +54,9 @@ public class Item {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToOne
-    @JoinColumn(name = "location_id")
-    private Location location;
+//    @ManyToOne
+//    @JoinColumn(name = "location_id")
+//    private Location location;
 
     @OneToMany(mappedBy = "item")
     private Set<Movement> movements;

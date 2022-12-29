@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS movements (
 
 CREATE TABLE IF NOT EXISTS coordinations (
     movement_id int NOT NULL,
-    chief_id int NOT NULL,
+    chief_user_id int NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now()
 );
 
@@ -80,6 +80,6 @@ ALTER TABLE movements ADD CONSTRAINT movements_location_from_id FOREIGN KEY (loc
 ALTER TABLE movements ADD CONSTRAINT movements_location_to_id FOREIGN KEY (location_to_id) REFERENCES locations (id);
 
 ALTER TABLE coordinations ADD CONSTRAINT movement_id FOREIGN KEY (movement_id) REFERENCES movements (id);
-ALTER TABLE coordinations ADD CONSTRAINT chief_id FOREIGN KEY (chief_id) REFERENCES users (id);
+ALTER TABLE coordinations ADD CONSTRAINT chief_user_id FOREIGN KEY (chief_id) REFERENCES users (id);
 
 COMMIT;

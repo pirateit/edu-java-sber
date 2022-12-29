@@ -10,7 +10,7 @@
 <img th:src="@{/img/map.png}"/>
 <form method="POST" th:object="${location}">
     <select>
-
+        <option th:each="location : ${locations}" th:value="${location.id}" th:text="${location.title}"></option>
     </select>
 
 

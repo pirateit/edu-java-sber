@@ -14,10 +14,12 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Set;
 
-@Data
+//@Data
 @Entity
 @Table(name = "users")
-@NoArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 @AllArgsConstructor
 public class User {
 
@@ -57,7 +59,7 @@ public class User {
     private Role role = Role.USER;
 
     @Column(name = "created_at")
-    private final Timestamp createdAt = new Timestamp(new Date().getTime());
+    private Timestamp createdAt = new Timestamp(new Date().getTime());
 
     @Column(name = "deleted_at")
     private Timestamp deletedAt;
@@ -97,11 +99,9 @@ public class User {
     private Set<Location> locations;
 
     @OneToMany(mappedBy = "chief")
-    @JsonIgnore
     private Set<Coordination> coordinations;
 
     @OneToMany(mappedBy = "user")
-    @JsonIgnore
     private Set<Movement> movements;
 
     public enum Role {
