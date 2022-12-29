@@ -1,5 +1,6 @@
 package com.inventory.main.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.inventory.main.location.Location;
 import com.inventory.main.movement.Coordination;
 import com.inventory.main.movement.Movement;
@@ -16,8 +17,8 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "users")
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @Id
@@ -92,12 +93,15 @@ public class User {
 //    }
 
     @OneToMany(mappedBy = "responsibleUser")
+    @JsonIgnore
     private Set<Location> locations;
 
     @OneToMany(mappedBy = "chief")
+    @JsonIgnore
     private Set<Coordination> coordinations;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private Set<Movement> movements;
 
     public enum Role {

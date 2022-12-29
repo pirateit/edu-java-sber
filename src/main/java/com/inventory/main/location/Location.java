@@ -15,8 +15,8 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "locations")
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class Location {
 
     @Id
@@ -32,8 +32,8 @@ public class Location {
 
     private Integer depth;
 
-//    @Column(name = "responsible_user_id")
-//    private Integer responsibleUserId;
+    @Column(name = "responsible_user_id")
+    private Integer responsibleUserId;
 
     @Column(name = "created_at")
     private final Timestamp createdAt = new Timestamp(new Date().getTime());
@@ -41,8 +41,8 @@ public class Location {
     @Column(name = "deleted_at")
     private Timestamp deletedAt;
 
-    @ManyToOne
-    @JoinColumn(name = "responsible_user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "responsible_user_id", insertable = false, updatable = false)
     private User responsibleUser;
 
     @OneToMany(mappedBy = "location")

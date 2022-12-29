@@ -15,12 +15,20 @@ import java.util.Optional;
 @RequestMapping("/api/locations")
 public class LocationController {
 
-//    private final LocationRepository locationRepo;
-//
-//    @Autowired
-//    public LocationController(LocationRepository locationRepo) {
-//        this.locationRepo = locationRepo;
-//    }
+    private final LocationRepository locationRepo;
+
+    @Autowired
+    public LocationController(LocationRepository locationRepo) {
+        this.locationRepo = locationRepo;
+    }
+
+    @GetMapping
+    public Iterable<Location> getAll() {
+        Iterable<Location> locations = locationRepo.findAll();
+
+        return locations;
+    }
+
 //
 //    @GetMapping("/{id}")
 //    public ResponseEntity<Location> findOne(@PathVariable("id") Integer id) {
