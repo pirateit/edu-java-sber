@@ -1,22 +1,35 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="${title}"></title>
-</head>
+<head th:replace="fragments/header.html :: head"></head>
 <body>
-<h1>Create new location</h1>
-<img th:src="@{/img/map.png}"/>
-<form method="POST" th:object="${location}">
-    <select>
-        <option th:each="location : ${locations}" th:value="${location.id}" th:text="${location.title}"></option>
-    </select>
+<div th:replace="fragments/header.html :: logo"></div>
+<header th:replace="fragments/header.html :: menu"></header>
+<aside class="aside">
+    <nav>
+        <ul>
+            <li class="aside__menu-item">
+                <a class="aside__menu-item-link" href="/locations">All locations</a>
+            </li>
+            <li class="aside__menu-item">
+                <a class="aside__menu-item-link" href="/locations/create">+ New location</a>
+            </li>
+        </ul>
+    </nav>
+</aside>
+<main>
+    <h1>Create new location</h1>
+    <img th:src="@{/img/map.png}"/>
+    <form method="POST" th:object="${location}">
+        <select>
+            <option th:each="location : ${locations}" th:value="${location.id}" th:text="${location.title}"></option>
+        </select>
 
 
-    <div>
-        <button>Submit Your Taco</button>
-    </div>
-</form>
+        <div>
+            <button>Submit Your Taco</button>
+        </div>
+    </form>
+</main>
 </body>
 </html>

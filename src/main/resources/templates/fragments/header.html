@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head">
+    <meta charset="UTF-8">
+    <title th:text="${title}"></title>
+    <link th:href="@{/assets/css/normalize.css}" rel="stylesheet">
+    <link th:href="@{/assets/css/style.css}" rel="stylesheet">
+</head>
+<body>
+<div th:fragment="logo" class="logo">
+    <a class="logo__link" href="/">Inventory</a>
+</div>
+<header th:fragment="menu">
+    <nav>
+        <ul>
+            <li class="header__menu-item">
+                <a class="header__menu-item-link" href="/">Dashboard</a>
+            </li>
+            <li class="header__menu-item">
+                <a class="header__menu-item-link" href="/locations">Locations</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+</body>
+</html>

@@ -1,14 +1,27 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="${title}"></title>
-</head>
+<head th:replace="fragments/header.html :: head"></head>
 <body>
-<h1>LIST122</h1>
-<div th:each="location : ${wrap}">
-    <span th:text="${location.name}"></span><br/>
-</div>
+<div th:replace="fragments/header.html :: logo"></div>
+<header th:replace="fragments/header.html :: menu"></header>
+<aside class="aside">
+    <nav>
+        <ul>
+            <li class="aside__menu-item">
+                <a class="aside__menu-item-link" href="/locations">All locations</a>
+            </li>
+            <li class="aside__menu-item">
+                <a class="aside__menu-item-link" href="/locations/create">+ New location</a>
+            </li>
+        </ul>
+    </nav>
+</aside>
+<main>
+    <h1>LIST122</h1>
+    <div th:each="location : ${wrap}">
+        <span th:text="${location.name}"></span><br/>
+    </div>
+</main>
 </body>
 </html>
