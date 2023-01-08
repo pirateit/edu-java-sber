@@ -5,23 +5,29 @@ import com.inventory.main.location.Location;
 import com.inventory.main.movement.Coordination;
 import com.inventory.main.movement.Movement;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 
-//@Data
 @Entity
 @Table(name = "users")
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
+@NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,17 +50,17 @@ public class User {
     @Digits(integer = 11, fraction = 0)
     private Long phone;
 
-    @NotBlank
     private String password;
 
     @Column(name = "location_id")
-    @NotBlank
+    @NotNull
     private Integer locationId;
 
     @Column(name = "is_active")
     private Boolean isActive = true;
 
     @Column
+    @NotNull
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
 
@@ -64,35 +70,39 @@ public class User {
     @Column(name = "deleted_at")
     private Timestamp deletedAt;
 
-//    @Override
-//    public String getUsername() {
-//        return this.email;
-//    }
-//
-//    @Override
-//    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
-//    }
-//
-//    @Override
-//    public boolean isAccountNonExpired() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isAccountNonLocked() {
-//        return this.isActive;
-//    }
-//
-//    @Override
-//    public boolean isCredentialsNonExpired() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isEnabled() {
-//        return this.isActive;
-//    }
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Arrays.asList(new SimpleGrantedAuthority("ROLE_" + role.name()));
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return this.isActive && this.deletedAt == null;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.isActive;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "location_id", insertable = false, updatable = false)
+    private Location location;
 
     @OneToMany(mappedBy = "responsibleUser")
     @JsonIgnore
@@ -105,7 +115,21 @@ public class User {
     private Set<Movement> movements;
 
     public enum Role {
-        OWNER, ADMIN, USER
+        OWNER {
+            public String toString() {
+                return "Владелец";
+            }
+        },
+        ADMIN {
+            public String toString() {
+                return "Администратор";
+            }
+        },
+        USER {
+            public String toString() {
+                return "Пользователь";
+            }
+        }
     }
 
 }

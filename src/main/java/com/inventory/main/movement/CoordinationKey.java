@@ -1,5 +1,7 @@
 package com.inventory.main.movement;
 
+import lombok.Getter;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
@@ -7,6 +9,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 @Embeddable
+@Getter
 public class CoordinationKey implements Serializable {
 
     @Column(name = "movement_id")
@@ -17,6 +20,17 @@ public class CoordinationKey implements Serializable {
 
     @Column(name = "created_at")
     private final Timestamp createdAt = new Timestamp(new Date().getTime());
+
+    public CoordinationKey() { };
+
+    public CoordinationKey(Integer movementId) {
+        this.movementId = movementId;
+    }
+
+    public CoordinationKey(Integer movementId, Integer chiefUserId) {
+        this.movementId = movementId;
+        this.chiefUserId = chiefUserId;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -35,5 +49,9 @@ public class CoordinationKey implements Serializable {
 //    public int hashCode() {
 //
 //    }
+
+    public void setChiefUserId(Integer id) {
+        this.chiefUserId = id;
+    }
 
 }

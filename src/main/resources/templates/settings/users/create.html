@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header.html :: head"></head>
+<body>
+<div th:replace="fragments/header.html :: logo"></div>
+<header th:replace="fragments/header.html :: menu"></header>
+<aside th:replace="fragments/settings/aside.html :: aside"></aside>
+<main>
+    <header class="main__header">
+        <h1 th:text="${title}"></h1>
+    </header>
+    <form class="form" method="POST" th:action="@{/settings/users}" th:object="${user}"
+          id="form">
+
+        <div class="form__row">
+            <label class="form__label" for="last-name">Фамилия</label>
+            <input type="text" id="last-name" th:field="*{lastName}" required>
+        </div>
+        <span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
+
+        <div class="form__row">
+            <label class="form__label" for="first-name">Имя</label>
+            <input type="text" id="first-name" th:field="*{firstName}" required>
+        </div>
+        <span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
+
+        <div class="form__row">
+            <label class="form__label" for="email">Email</label>
+            <input type="text" id="email" th:field="*{email}" required>
+        </div>
+        <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+
+        <div class="form__row">
+            <label class="form__label" for="phone">Номер телефона</label>
+            <input type="text" id="phone" th:field="*{phone}">
+        </div>
+        <span th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></span>
+
+        <div class="form__row">
+            <label class="form__label" for="location-id">Подразделение</label>
+            <select th:field="*{locationId}" id="location-id" required>
+                <option th:each="location : ${locations}" th:value="${location.id}"
+                        th:text="${location.title + ' (ID: ' + location.id + ')'}"
+                        th:selected="${location.id == user.locationId}"></option>
+            </select>
+        </div>
+        <span th:if="${#fields.hasErrors('locationId')}" th:errors="*{locationId}"></span>
+
+        <div class="form__row">
+            <label class="form__label" for="location-id">Роль</label>
+            <select th:field="*{role}" id="role" required>
+                <option th:each="role : ${T(com.inventory.main.user.User.Role).values()}"
+                        th:value="${role.name()}" th:text="${role.toString()}"></option>
+            </select>
+        </div>
+        <span th:if="${#fields.hasErrors('locationId')}" th:errors="*{locationId}"></span>
+
+        <div class="form__row">
+            <label class="form__label" for="password">Пароль</label>
+            <input type="password" id="password" th:field="*{password}" required>
+        </div>
+        <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+
+        <div class="form__row">
+            <label class="form__label" for="is-active">Пользователь активен</label>
+            <input type="checkbox" id="is-active" th:field="*{isActive}" checked>
+        </div>
+        <span th:if="${#fields.hasErrors('isActive')}" th:errors="*{isActive}"></span>
+
+        <div class="form__bottom">
+            <a class="btn" href="/settings/users">Отмена</a>
+            <div>
+                <button class="btn btn-main" type="submit" form="form">Сохранить</button>
+            </div>
+        </div>
+    </form>
+</main>
+</body>
+</html>

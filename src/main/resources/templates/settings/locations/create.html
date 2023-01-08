@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header.html :: head"></head>
+<body>
+<div th:replace="fragments/header.html :: logo"></div>
+<header th:replace="fragments/header.html :: menu"></header>
+<aside th:replace="fragments/settings/aside.html :: aside"></aside>
+<main>
+    <header class="main__header">
+        <h1 th:text="${title}"></h1>
+    </header>
+    <form class="form" method="POST" th:action="@{/settings/locations/create}" th:object="${location}">
+        <div class="form__row">
+            <label class="form__label" for="parent-id">Родительское подразделение</label>
+            <select th:field="*{parentId}" id="parent-id">
+                <option th:each="location : ${locations}" th:value="${location.id}"
+                        th:text="${location.title + ' (ID: ' + location.id + ')'}"></option>
+            </select>
+        </div>
+
+        <div class="form__row">
+            <label class="form__label" for="title">Наименование</label>
+            <input type="text" th:field="*{title}" id="title">
+            <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+        </div>
+
+        <div class="form__row">
+            <label class="form__label" for="responsible">Ответственный</label>
+            <select th:field="*{responsibleUserId}" id="responsible">
+                <option value="" selected>...</option>
+                <option th:each="user : ${users}" th:value="${user.id}"
+                        th:text="${user.lastName + ' ' + user.firstName + ' (ID: ' + user.id + ')'}"></option>
+            </select>
+        </div>
+
+        <div class="form__bottom">
+            <a class="btn" href="/settings/locations">Отмена</a>
+            <button class="btn btn-main">Сохранить</button>
+        </div>
+    </form>
+</main>
+</body>
+</html>

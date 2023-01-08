@@ -1,26 +1,35 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
 <head th:fragment="head">
     <meta charset="UTF-8">
     <title th:text="${title}"></title>
     <link th:href="@{/assets/css/normalize.css}" rel="stylesheet">
+    <link th:href="@{/assets/css/choices.css}" rel="stylesheet">
     <link th:href="@{/assets/css/style.css}" rel="stylesheet">
 </head>
-<body>
 <div th:fragment="logo" class="logo">
-    <a class="logo__link" href="/">Inventory</a>
+    <a class="logo__link" href="/">INVENTORY</a>
 </div>
-<header th:fragment="menu">
-    <nav>
+<header class="header" th:fragment="menu">
+    <nav class="header__menu-nav">
         <ul>
-            <li class="header__menu-item">
-                <a class="header__menu-item-link" href="/">Dashboard</a>
+            <li class="header__menu-item" th:classappend="${#httpServletRequest.getRequestURI() == '/' ? 'header__menu-item_active' : ''}">
+                <a class="header__menu-item-link" href="/">Главная</a>
             </li>
-            <li class="header__menu-item">
-                <a class="header__menu-item-link" href="/locations">Locations</a>
+            <li class="header__menu-item" th:classappend="${#httpServletRequest.getRequestURI().startsWith('/items') ? 'header__menu-item_active' : ''}">
+                <a class="header__menu-item-link" href="/items">Склад</a>
+            </li>
+            <li class="header__menu-item" th:classappend="${#httpServletRequest.getRequestURI().startsWith('/movements') ? 'header__menu-item_active' : ''}">
+                <a class="header__menu-item-link" href="/movements/all">Перемещения</a>
+            </li>
+            <li class="header__menu-item" th:classappend="${#httpServletRequest.getRequestURI().startsWith('/settings') ? 'header__menu-item_active' : ''}">
+                <a class="header__menu-item-link" href="/settings">Настройки</a>
             </li>
         </ul>
     </nav>
+    <div class="header__user">
+        <a class="header__user-profile" href="/profile">
+            <img src="/assets/img/profile.svg" width="26" height="26">
+            <span class="header__user-profile-text">Профиль</span>
+        </a>
+        <a class="header__user-link" href="/logout">Выйти</a>
+    </div>
 </header>
-</body>
-</html>

@@ -1,0 +1,8 @@
+<html>
+<ul th:fragment="menu (menuItemsList)">
+  <li class="tree__item" th:fragment="nestedMenu (menuItemsList)" th:each="item:${menuItemsList}">
+    <a th:href="@{/settings/locations/{id}(id=${item.id})}" th:text="${item.title}"></a>
+    <section th:replace="fragments/tree :: menu (menuItemsList=${item.children})"></section>
+  </li>
+</ul>
+</html>

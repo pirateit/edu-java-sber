@@ -7,6 +7,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -30,7 +31,7 @@ public class Item {
     @Size(max = 4)
     private String prefix;
 
-    @NotBlank
+    @NotNull
     private Long number;
 
     @NotBlank
@@ -38,11 +39,11 @@ public class Item {
 
     private Integer quantity = 1;
 
-//    @Column(name = "category_id")
-//    private Integer categoryId;
+    @Column(name = "category_id")
+    private Integer categoryId;
 
-//    @Column(name = "location_id")
-//    private Integer locationId;
+    @Column(name = "location_id")
+    private Integer locationId;
 
     @Column(name = "created_at")
     private final Timestamp createdAt = new Timestamp(new Date().getTime());
@@ -51,14 +52,14 @@ public class Item {
     private Timestamp deletedAt;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id", insertable = false, updatable = false)
     private Category category;
 
-//    @ManyToOne
-//    @JoinColumn(name = "location_id")
-//    private Location location;
+    @ManyToOne
+    @JoinColumn(name = "location_id", insertable = false, updatable = false)
+    private Location location;
 
-    @OneToMany(mappedBy = "item")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "item")
     private Set<Movement> movements;
 
 }

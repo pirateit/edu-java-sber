@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header.html :: head"></head>
+<body>
+<div th:replace="fragments/header.html :: logo"></div>
+<header th:replace="fragments/header.html :: menu"></header>
+<aside th:replace="fragments/items/aside.html :: aside"></aside>
+<main>
+    <h1 th:text="${title}"></h1>
+    <form method="POST" th:action="@{/items/{id}(id=${item.id})}" th:object="${item}">
+
+        <input type="hidden" th:field="*{id}" th:value="${item.id}">
+
+        <label for="number">Инв. номер</label>
+        <input type="text" th:field="*{prefix}" th:value="${item.prefix}" placeholder="Префикс" readonly>
+        &dash;
+        <input type="number" id="number" th:field="*{number}" th:value="${item.number}" placeholder="Номер" readonly>
+        <span th:if="${#fields.hasErrors('number')}" th:errors="*{number}"></span>
+
+        <label for="title">Наименование</label>
+        <input type="text" id="title" th:field="*{title}" th:value="${item.title}" placeholder="Наименование">
+        <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+
+        <label for="quantity">Количество</label>
+        <input type="number" id="quantity" th:field="*{quantity}" th:value="${item.quantity}" placeholder="Количество" disabled>
+
+        <div>
+            <input type="hidden" th:field="*{categoryId}" th:value="${item.categoryId}">
+            <input type="hidden" th:field="*{locationId}" th:value="${item.locationId}">
+            <button>Сохранить</button>
+        </div>
+    </form>
+    <h2>История</h2>
+    <a class="btn btn-main" th:href="@{/items/{id}/move(id=${item.id})}">Переместить</a>
+    <div style="overflow-x:auto;">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Дата</th>
+                <th>Тип</th>
+                <th>Ответственный</th>
+                <th>Статус</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th></th>
+                <td th:text="${#dates.format(item.getCreatedAt(), 'dd.MM.yyyy HH:mm')}"></td>
+                <td>Принято</td>
+                <td>Ответственный</td>
+                <td>Выполнено</td>
+            </tr>
+            <tr th:each="movement : ${movements}">
+                <td><a th:href="@{/movements/{id}(id=${movement.id})}" th:text="${movement.id}"></a></td>
+                <td th:text="${#dates.format(movement.getCreatedAt(), 'dd.MM.yyyy HH:mm')}"></td>
+                <td th:text="${movement.type.toString()}"></td>
+                <td th:text="${movement.user.getLastName() + ' ' + movement.user.getFirstName()}"></td>
+                <td th:text="${movement.status.toString()}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <h2>Списать</h2>
+    <form method="POST" th:action="@{/items/} + ${item.id} + @{/delete}" th:object="${item}">
+
+        <input type="hidden" th:field="*{id}" th:value="${item.id}">
+
+        <div>
+            <button>Удалить</button>
+        </div>
+    </form>
+</main>
+</body>
+</html>

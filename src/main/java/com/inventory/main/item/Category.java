@@ -1,14 +1,16 @@
 package com.inventory.main.item;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.Set;
 
-@Data
 @Entity
 @Table(name = "categories")
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Category {
@@ -28,6 +30,7 @@ public class Category {
     private Integer depth;
 
     @OneToMany(mappedBy = "category")
+    @JsonIgnore
     private Set<Item> items;
 
 }

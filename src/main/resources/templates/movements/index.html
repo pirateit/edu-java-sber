@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header.html :: head"></head>
+<body>
+<div th:replace="fragments/header.html :: logo"></div>
+<header th:replace="fragments/header.html :: menu"></header>
+<aside th:replace="fragments/movements/aside.html :: aside"></aside>
+<main>
+    <h1 th:text="${title}"></h1>
+    <div style="overflow-x:auto;">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Дата</th>
+                <th>Тип</th>
+                <th>Предмет</th>
+                <th>Количество</th>
+                <th>Откуда</th>
+                <th>Куда</th>
+                <th>Ответственный</th>
+                <th>Статус</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="movement : ${movements}">
+                <td><a th:href="@{/movements/{id}(id=${movement.id})}" th:text="${movement.id}"></a></td>
+                <td th:text="${#dates.format(movement.getCreatedAt(), 'dd.MM.yyyy HH:mm')}"></td>
+                <td th:text="${movement.type.toString()}"></td>
+                <td th:text="${movement.item.title}"></td>
+                <td th:text="${movement.quantity}"></td>
+                <td th:text="${movement.locationFrom.title}"></td>
+                <td th:text="${movement.locationTo.title}"></td>
+                <td th:text="${movement.user.getLastName() + ' ' + movement.user.getFirstName()}"></td>
+                <td th:text="${movement.status.toString()}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

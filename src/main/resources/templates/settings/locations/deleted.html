@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header.html :: head"></head>
+<body>
+<div th:replace="fragments/header.html :: logo"></div>
+<header th:replace="fragments/header.html :: menu"></header>
+<aside th:replace="fragments/settings/aside.html :: aside"></aside>
+<main>
+    <header class="main__header">
+        <h1 th:text="${title}"></h1>
+        <div>
+
+        </div>
+    </header>
+    <div style="overflow-x:auto;">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Название</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="location : ${locations}">
+                <td><a th:href="@{/settings/locations/{id}(id=${location.id})}" th:text="${location.id}"></a></td>
+                <td>
+                    <a th:href="@{/settings/locations/{id}(id=${location.id})}" th:text="${location.title}"></a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<aside class="aside" th:fragment="aside">
+    <nav>
+        <ul>
+            <li class="aside__menu-item">
+                <a class="aside__menu-item-link" th:classappend="${#httpServletRequest.getRequestURI() == '/movements/all' ? 'aside__menu-item-link_active' : ''}" href="/movements/all">
+                    Мои перемещения
+                </a>
+            </li>
+            <li class="aside__menu-item">
+                <a class="aside__menu-item-link" th:classappend="${#httpServletRequest.getRequestURI().startsWith('/movements/all?status=UNDER_APPROVAL') ? 'aside__menu-item-link_active' : ''}" href="/movements/all?status=UNDER_APPROVAL">
+                    Требующие согласования<span th:if="${movementsToApprove != 0}" th:text="${' (' + movementsToApprove + ')'}"></span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</aside>

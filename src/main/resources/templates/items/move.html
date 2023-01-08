@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header.html :: head"></head>
+<body>
+<div th:replace="fragments/header.html :: logo"></div>
+<header th:replace="fragments/header.html :: menu"></header>
+<aside th:replace="fragments/items/aside.html :: aside"></aside>
+<main>
+    <h1 th:text="${title}"></h1>
+    <form method="POST" th:action="@{/items/{id}/move(id=${item.id})}" th:object="${movement}">
+        <select th:field="*{type}">
+            <option th:each="type : ${T(com.inventory.main.movement.Movement.Type).values()}"
+                    th:value="${type.name()}" th:text="${type.toString()}"></option>
+        </select>
+        <span th:if="${#fields.hasErrors('type')}" th:errors="*{type}"></span>
+
+        <label for="quantity">Количество</label>
+        <input type="number" id="quantity" th:field="*{quantity}" min="1" th:max="${item.quantity}">
+
+        <select th:field="*{locationToId}">
+            <option th:each="location : ${locations}" th:value="${location.id}" th:text="${location.title + ' (' + location.id + ')'}"></option>
+        </select>
+        <span th:if="${#fields.hasErrors('locationToId')}" th:errors="*{locationToId}"></span>
+
+        <textarea th:field="*{comment}" placeholder="Комментарий (опционально)"></textarea>
+
+        <div>
+            <button>Сохранить</button>
+        </div>
+    </form>
+</main>
+</body>
+</html>

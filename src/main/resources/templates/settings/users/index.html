@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header.html :: head"></head>
+<body>
+<div th:replace="fragments/header.html :: logo"></div>
+<header th:replace="fragments/header.html :: menu"></header>
+<aside th:replace="fragments/settings/aside.html :: aside"></aside>
+<main>
+    <header class="main__header">
+        <h1 th:text="${title}"></h1>
+        <div>
+            <a class="btn btn-stroke btn-trash" href="/settings/users/deleted">Корзина</a>
+            <a class="btn btn-stroke" href="/settings/users/create">+ Добавить</a>
+        </div>
+    </header>
+    <div style="overflow-x:auto;">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Фамилия Имя</th>
+                <th>Email</th>
+                <th>Телефон</th>
+                <th>Подразделение</th>
+                <th>Роль</th>
+                <th>Активен</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td><a th:href="@{/settings/users/{id}(id=${user.id})}" th:text="${user.id}"></a></td>
+                <td><a th:href="@{/settings/users/{id}(id=${user.id})}"
+                       th:text="${user.LastName + ' ' + user.firstName}"></a></td>
+                <td>
+                    <a th:if="${user.email}" th:href="@{/settings/users/{id}(id=${user.id})}"
+                       th:text="${user.email}"></a>
+                </td>
+                <td>
+                    <a th:if="${user.phone}" th:href="@{/settings/users/{id}(id=${user.id})}"
+                       th:text="${user.phone}"></a>
+                </td>
+                <td>
+                    <a th:href="@{/settings/users/{id}(id=${user.id})}" th:text="${user.location.title}"></a>
+                </td>
+                <td><a th:href="@{/settings/users/{id}(id=${user.id})}" th:text="${user.role.toString()}"></a></td>
+                <td>
+                    <a th:href="@{/settings/users/{id}(id=${user.id})}" th:text="${user.isActive ? '+' : '-'}"></a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

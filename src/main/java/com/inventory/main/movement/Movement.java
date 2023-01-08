@@ -7,13 +7,15 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Set;
 
-@Data
 @Entity
 @Table(name = "movements")
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Movement {
@@ -23,32 +25,26 @@ public class Movement {
     private Integer id;
 
     @Enumerated(EnumType.STRING)
-    @NotBlank
+    @NotNull
     private Type type;
 
     @Column(name = "item_id")
-    @NotBlank
     private Integer itemId;
 
-    @Column
-    @NotBlank
-    private Integer quantity;
+    private Integer quantity = 1;
 
     @Column(name = "location_from_id")
-    @NotBlank
-    private Integer locationFrom;
+    private Integer locationFromId;
 
     @Column(name = "location_to_id")
-    @NotBlank
-    private Integer locationTo;
+    @NotNull
+    private Integer locationToId;
 
     @Column(name = "requested_user_id")
-    @NotBlank
     private Integer requestedUserId;
 
     @Column
     @Enumerated(EnumType.STRING)
-    @NotBlank
     private Status status = Status.UNDER_APPROVAL;
 
     private String comment;
@@ -56,7 +52,7 @@ public class Movement {
     @Column(name = "created_at")
     private final Timestamp createdAt = new Timestamp(new Date().getTime());
 
-    @OneToMany(mappedBy = "movement")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "movement")
     private Set<Coordination> coordinations;
 
     @ManyToOne
@@ -69,18 +65,46 @@ public class Movement {
 
     @ManyToOne
     @JoinColumn(name = "location_from_id", insertable = false, updatable = false)
-    private Location LocationFrom;
+    private Location locationFrom;
 
     @ManyToOne
     @JoinColumn(name = "location_to_id", insertable = false, updatable = false)
-    private Location LocationTo;
+    private Location locationTo;
 
     public enum Type {
-        MOVEMENT, WRITE_OFF
+        MOVEMENT {
+            public String toString() {
+                return "Перемещение";
+            }
+        },
+        WRITE_OFF {
+            public String toString() {
+                return "Списание";
+            }
+        }
     }
 
     public enum Status {
-        UNDER_APPROVAL, SENT, ACCEPTED, CANCELLED
+        UNDER_APPROVAL {
+            public String toString() {
+                return "На согласовании";
+            }
+        },
+        SENT {
+            public String toString() {
+                return "Отправлено";
+            }
+        },
+        ACCEPTED {
+            public String toString() {
+                return "Принято";
+            }
+        },
+        CANCELLED {
+            public String toString() {
+                return "Отменено";
+            }
+        }
     }
 
 }

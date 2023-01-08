@@ -6,7 +6,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.core.SpringVersion;
 
 @SpringBootApplication
-@EnableAutoConfiguration
 public class MainApplication {
 
 	public static void main(String[] args) {

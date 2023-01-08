@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header.html :: head"></head>
+<body>
+<div th:replace="fragments/header.html :: logo"></div>
+<header th:replace="fragments/header.html :: menu"></header>
+<aside th:replace="fragments/settings/aside.html :: aside"></aside>
+<main>
+    <header class="main__header">
+        <h1 th:text="${title}"></h1>
+    </header>
+    <form class="form" method="POST" th:action="@{/settings/locations/{id}(id=${location.id})}" th:object="${location}"
+          id="form">
+        <div th:if="${location.parent}" class="form__row">
+            <label class="form__label" for="parent-id">Родительское подразделение</label>
+            <input type="text" id="parent-id" th:value="${location.parent.title + ' (ID: ' + location.parent.id + ')'}"
+                   disabled>
+        </div>
+
+        <div class="form__row">
+            <label class="form__label" for="title">Наименование</label>
+            <input type="text" th:field="*{title}" id="title">
+        </div>
+        <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+
+        <div class="form__row">
+            <label class="form__label" for="responsible">Ответственный</label>
+            <select th:field="*{responsibleUserId}" id="responsible">
+                <option value="" selected>...</option>
+                <option th:each="user : ${users}" th:value="${user.id}"
+                        th:text="${user.lastName + ' ' + user.firstName + ' (ID: ' + user.id + ')'}"
+                        th:selected="${user.id == location.responsibleUserId}"></option>
+            </select>
+        </div>
+
+        <div class="form__bottom">
+            <a class="btn" th:href="${location.deletedAt == null ? '/settings/locations' : '/settings/locations/deleted'}">Отмена</a>
+            <div>
+                <a class="btn btn-green" th:if="${location.deletedAt != null}" th:href="@{/settings/locations/{id}/restore(id=${location.id})}" type="submit">Восстановить</a>
+                <a class="btn btn-red" th:if="${location.deletedAt == null}" th:href="@{/settings/locations/{id}/delete(id=${location.id})}" type="submit">Удалить</a>
+                <button class="btn btn-main" type="submit" form="form">Сохранить</button>
+            </div>
+        </div>
+    </form>
+</main>
+</body>
+</html>

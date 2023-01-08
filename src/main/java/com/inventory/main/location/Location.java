@@ -1,24 +1,21 @@
 package com.inventory.main.location;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.inventory.main.item.Item;
 import com.inventory.main.movement.Movement;
 import com.inventory.main.user.User;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Set;
 
-@Data
 @Entity
 @Table(name = "locations")
-@NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
+@Getter
+@Setter
+@NoArgsConstructor(access = AccessLevel.PUBLIC, force = true)
 @AllArgsConstructor
 public class Location {
 
@@ -26,11 +23,10 @@ public class Location {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotBlank
-    @Size(min = 2, max = 50)
+    @Size(min = 2, max = 50, message = "Длина названия должна быть от 2 до 50 символов")
     private String title;
 
-    @Column(name = "parent_id", insertable = false, updatable = false)
+    @Column(name = "parent_id")
     private Integer parentId;
 
     private Integer depth;
@@ -47,22 +43,24 @@ public class Location {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "responsible_user_id", insertable = false, updatable = false)
     private User responsibleUser;
-//
-//    @OneToMany(mappedBy = "parentLocation")
-//    @JsonIgnore
-//    private Set<Location> parents;
-//
-//    @ManyToOne
-//    @JoinColumn(name = "parent_id", insertable = false, updatable = false)
-//    private Location parentLocation;
 
-//    @OneToMany(mappedBy = "location")
-//    private Set<Item> items;
+    @OneToMany(mappedBy = "location")
+    @JsonIgnore
+    private Set<User> users;
 
-    @OneToMany(mappedBy = "locationFrom")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id", insertable = false, updatable = false)
+    private Location parent;
+
+    @OneToMany(mappedBy = "parent")
+    @OrderBy("title ASC")
+
+    private Set<Location> children;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "locationFrom")
     private Set<Movement> movementsFrom;
 
-    @OneToMany(mappedBy = "locationTo")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "locationTo")
     private Set<Movement> movementsTo;
 
 }

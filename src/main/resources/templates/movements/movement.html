@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header.html :: head"></head>
+<body>
+<div th:replace="fragments/header.html :: logo"></div>
+<header th:replace="fragments/header.html :: menu"></header>
+<aside th:replace="fragments/movements/aside.html :: aside"></aside>
+<main>
+    <h1 th:text="${title}"></h1>
+    <h2>Информация</h2>
+    <div>
+        Тип перемещения: <span th:text="${movement.type.toString()}"></span>
+    </div>
+    <div>
+        Предмет:<br>
+        Наименование: <span th:text="${movement.item.title}"></span><br>
+        Инв. номер: <span th:text="${movement.item.prefix != '' ? movement.item.prefix + '-' + movement.item.number : movement.item.number}"></span>
+    </div>
+    <div>
+        Количество: <span th:text="${movement.quantity}"></span>
+    </div>
+    <div>
+        Откуда: <span th:text="${movement.locationFrom.title}"></span><br>
+        Куда: <span th:text="${movement.locationTo.title}"></span>
+    </div>
+    <div>
+        Комментарий: <span th:text="${movement.comment}"></span>
+    </div>
+
+    <h2>Согласования</h2>
+    <div style="overflow-x:auto;">
+        <table>
+            <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Согласовывающий</th>
+                <th>Статус</th>
+                <th>Комментарий</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="coord : ${coordinations}">
+                <td th:text="${#dates.format(coord.id.getCreatedAt(), 'dd.MM.yyyy HH:mm')}"></td>
+                <td th:text="${coord.chief.lastName + ' ' + coord.chief.firstName}"></td>
+                <td th:text="${coord.status.toString()}"></td>
+                <td th:text="${coord.comment}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>
