@@ -1,4 +1,10 @@
-<footer th:fragment="footer">
-    <script type="text/javascript" th:src="@{/assets/js/choices.min.js}"></script>
-    <script type="text/javascript" th:src="@{/assets/js/main.js}"></script>
-</footer>
+<section th:fragment="footer">
+  <script>
+    function preloader() {
+      document.getElementById("loader").style.display = "none";
+      document.getElementById("app").style.display = "grid";
+    }
+  </script>
+  <script type="text/javascript" th:src="@{/assets/js/choices.min.js}"></script>
+  <script type="text/javascript" th:src="@{/assets/js/main.js}"></script>
+</section>

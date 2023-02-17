@@ -6,22 +6,22 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Set;
+
 @Repository
 public interface UserRepository extends CrudRepository<User, Integer> {
 
-    Iterable<User> findAllByDeletedAtIsNullOrderByLastNameAscFirstNameAsc();
+  Set<User> findAllByDeletedAtIsNullOrderByLastNameAscFirstNameAsc();
 
-    Iterable<User> findAllByDeletedAtIsNotNullOrderByLastNameAscFirstNameAsc();
+  Set<User> findAllByDeletedAtIsNotNullOrderByLastNameAscFirstNameAsc();
 
-    User findByEmail(String email);
+  Set<User> findByLocationIdInAndDeletedAtIsNullOrderByLastNameAscFirstNameAsc(Set<Integer> locations);
 
-    @Override
-    @Modifying
-    @Query(value = "UPDATE users SET deleted_at = now(), is_active = false WHERE id = :id ;", nativeQuery = true)
-    void deleteById(@Param("id") Integer id);
+  @Query(value = "SELECT * FROM users WHERE email = :login OR phone = :login ;", nativeQuery = true)
+  User findByEmailOrPhone(@Param("login") String login);
 
-    @Modifying
-    @Query(value = "UPDATE users SET deleted_at = NULL, is_active = true WHERE id = :id ;", nativeQuery = true)
-    void restoreById(@Param("id") int id);
+  @Modifying
+  @Query(value = "UPDATE users SET deleted_at = NULL, is_active = true WHERE id = :id ;", nativeQuery = true)
+  void restoreById(@Param("id") int id);
 
 }

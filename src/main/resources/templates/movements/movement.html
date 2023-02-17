@@ -2,53 +2,181 @@
 <html lang="ru" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header.html :: head"></head>
-<body>
-<div th:replace="fragments/header.html :: logo"></div>
-<header th:replace="fragments/header.html :: menu"></header>
-<aside th:replace="fragments/movements/aside.html :: aside"></aside>
-<main>
-    <h1 th:text="${title}"></h1>
-    <h2>Информация</h2>
-    <div>
-        Тип перемещения: <span th:text="${movement.type.toString()}"></span>
-    </div>
-    <div>
-        Предмет:<br>
-        Наименование: <span th:text="${movement.item.title}"></span><br>
-        Инв. номер: <span th:text="${movement.item.prefix != '' ? movement.item.prefix + '-' + movement.item.number : movement.item.number}"></span>
-    </div>
-    <div>
-        Количество: <span th:text="${movement.quantity}"></span>
-    </div>
-    <div>
-        Откуда: <span th:text="${movement.locationFrom.title}"></span><br>
-        Куда: <span th:text="${movement.locationTo.title}"></span>
-    </div>
-    <div>
-        Комментарий: <span th:text="${movement.comment}"></span>
-    </div>
+<body onload="preloader()">
 
-    <h2>Согласования</h2>
-    <div style="overflow-x:auto;">
-        <table>
+<div id="loader"></div>
+
+<div class="app" id="app">
+
+  <div th:replace="fragments/header.html :: logo"></div>
+  <header th:replace="fragments/header.html :: menu"></header>
+  <aside th:replace="fragments/aside.html :: aside"></aside>
+
+  <main>
+    <header class="main__header">
+      <div>
+        <h1 class="movement__title" th:text="${title}"></h1>
+        <span class="movement__status" th:text="${movement.status}"></span>
+      </div>
+      <div>
+      </div>
+    </header>
+    <div class="main__2col">
+      <div class="main__2col-col">
+        <div class="main__subheader">
+          <h2>Информация</h2>
+        </div>
+        <div class="form__row">
+          <div class="form__row-inputs">
+            <span class="form__label">Кем создано</span>
+            <a th:href="@{/users/{id}(id=${movement.user.id})}"
+               th:text="${movement.user.lastName + ' ' + movement.user.firstName}"></a>
+          </div>
+        </div>
+        <div class="form__row">
+          <div class="form__row-inputs">
+            <span class="form__label">Тип перемещения</span>
+            <span th:text="${movement.type.toString()}"></span>
+          </div>
+        </div>
+        <div class="form__row">
+          <div class="form__row-inputs">
+            <span class="form__label">Предмет</span>
+            <a th:href="@{/items/{id}(id=${movement.item.id})}"
+               th:text="${movement.item.title + ' (' + (movement.item.prefix != '' ? movement.item.prefix + '-' + movement.item.number : movement.item.number) + ')'}"></a>
+          </div>
+        </div>
+        <div class="form__row">
+          <div class="form__row-inputs">
+            <span class="form__label">Количество</span>
+            <span th:text="${movement.quantity}"></span>
+          </div>
+        </div>
+        <div class="form__row" th:if="${movement.locationFromId != null}">
+          <div class="form__row-inputs">
+            <span class="form__label">Откуда</span>
+            <a th:href="@{/locations/{id}(id=${movement.locationToId})}" th:text="${movement.locationFrom.title}"></a>
+          </div>
+        </div>
+        <div class="form__row" th:if="${movement.locationToId != null}">
+          <div class="form__row-inputs">
+            <span class="form__label">Куда</span>
+            <a th:href="@{/locations/{id}(id=${movement.locationToId})}" th:text="${movement.locationTo.title}"></a>
+          </div>
+        </div>
+        <div class="form__row">
+          <div class="form__row-inputs">
+            <span class="form__label">Комментарий</span>
+            <span
+              th:text="${movement.comment != null and #strings.length(movement.comment) > 0 ? movement.comment : '-'}"></span>
+          </div>
+        </div>
+      </div>
+      <div class="main__2col-col">
+        <div class="main__subheader">
+          <h2>История согласований</h2>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
             <thead>
             <tr>
-                <th>Дата</th>
-                <th>Согласовывающий</th>
-                <th>Статус</th>
-                <th>Комментарий</th>
+              <th>Дата</th>
+              <th>Ответственный</th>
+              <th>Статус</th>
+              <th>Комментарий</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="coord : ${coordinations}">
-                <td th:text="${#dates.format(coord.id.getCreatedAt(), 'dd.MM.yyyy HH:mm')}"></td>
-                <td th:text="${coord.chief.lastName + ' ' + coord.chief.firstName}"></td>
-                <td th:text="${coord.status.toString()}"></td>
-                <td th:text="${coord.comment}"></td>
+            <tr th:each="coord : ${movement.coordinations}">
+              <td th:text="${#dates.format(coord.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
+              <td th:text="${coord.chief.lastName + ' ' + coord.chief.firstName}"></td>
+              <td th:text="${coord.status.toString()}"></td>
+              <td th:text="${coord.comment}"></td>
             </tr>
             </tbody>
-        </table>
+          </table>
+        </div>
+        <form class="form movement__form"
+              th:if="${lastCoordination != null && lastCoordination.status.name() == 'WAITING' && lastCoordination.chiefUserId == #authentication.principal.id}"
+              th:action="@{/movements/{id}/coordinations(id=${movement.id})}" method="POST"
+              th:object="${lastCoordination}">
+          <div class="form__row">
+            <select th:field="*{status}">
+              <option value="COORDINATED"
+                      th:text="${T(com.inventory.main.movement.Coordination.Status).COORDINATED.toString()}"></option>
+              <option value="REFUSED"
+                      th:text="${T(com.inventory.main.movement.Coordination.Status).REFUSED.toString()}"></option>
+            </select>
+          </div>
+          <div class="form__row">
+            <textarea th:field="*{comment}" rows="3" placeholder="Комментарий (опционально)"></textarea>
+          </div>
+          <div class="form__bottom">
+            <div></div>
+            <div>
+              <button class="btn btn-main" type="submit">Согласовать</button>
+            </div>
+          </div>
+        </form>
+        <form class="form movement__form"
+              th:if="${lastCoordination != null && movement.requestedUserId == #authentication.principal.id && lastCoordination.status.name() == 'COORDINATED' && movement.type.name() == 'WRITE_OFF'}"
+              th:action="@{/movements/{id}/coordinations(id=${movement.id})}" method="POST"
+              th:object="${lastCoordination}">
+          <div class="form__row">
+            <input type="hidden" th:field="*{status}" value="ACCEPTED">
+          </div>
+          <div class="form__row">
+            <textarea th:field="*{comment}" rows="3" placeholder="Комментарий (опционально)"></textarea>
+          </div>
+          <div class="form__bottom">
+            <div></div>
+            <div>
+              <button class="btn btn-main" type="submit">Списать</button>
+            </div>
+          </div>
+        </form>
+<!--        <form class="form movement__form"-->
+<!--              th:if="${lastCoordination != null && movement.requestedUserId == #authentication.principal.id && lastCoordination.status.name() == 'COORDINATED' && movement.type.name() == 'MOVEMENT'}"-->
+<!--              th:action="@{/movements/{id}/coordinations(id=${movement.id})}" method="POST">-->
+        <form class="form movement__form"
+              th:if="${lastCoordination != null && #lists.contains(userLocations, movement.locationFrom) && lastCoordination.status.name() == 'COORDINATED' && movement.type.name() == 'MOVEMENT'}"
+              th:action="@{/movements/{id}/coordinations(id=${movement.id})}" method="POST">
+          <div class="form__row">
+            <input type="hidden" name="status" value="SENT">
+          </div>
+          <div class="form__row">
+            <textarea name="comment" rows="3" placeholder="Комментарий (опционально)"></textarea>
+          </div>
+          <div class="form__bottom">
+            <div></div>
+            <div>
+              <button class="btn btn-main" type="submit">Отправить</button>
+            </div>
+          </div>
+        </form>
+        <form class="form movement__form"
+              th:if="${lastCoordination != null and lastCoordination.status.name() == 'SENT' and movement.locationTo.responsibleUserId == #authentication.principal.id}"
+              th:action="@{/movements/{id}/coordinations(id=${movement.id})}" method="POST">
+          <div class="form__row">
+            <input type="hidden" name="status" value="ACCEPTED">
+          </div>
+          <div class="form__row">
+            <textarea name="comment" rows="3" placeholder="Комментарий (опционально)"></textarea>
+          </div>
+          <div class="form__bottom">
+            <div></div>
+            <div>
+              <button class="btn btn-main" type="submit">Принять</button>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
-</main>
+  </main>
+
+</div>
+
+<section th:include="fragments/footer.html :: footer" th:remove="tag"></section>
+
 </body>
 </html>

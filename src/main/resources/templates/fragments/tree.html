@@ -1,7 +1,7 @@
 <html>
-<ul th:fragment="menu (menuItemsList)">
-  <li class="tree__item" th:fragment="nestedMenu (menuItemsList)" th:each="item:${menuItemsList}">
-    <a th:href="@{/settings/locations/{id}(id=${item.id})}" th:text="${item.title}"></a>
+<ul class="tree__list" th:if="${menuItemsList.size > 0}"  th:fragment="menu (menuItemsList)">
+  <li class="tree__item" th:fragment="nestedMenu (menuItemsList, cat)" th:each="item:${menuItemsList}">
+    &#9654;&nbsp;<a th:href="@{/settings/{cat}/{id}(id=${item.id},cat=${cat})}" th:text="${item.title}"></a>
     <section th:replace="fragments/tree :: menu (menuItemsList=${item.children})"></section>
   </li>
 </ul>

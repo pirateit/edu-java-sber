@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header.html :: head"></head>
+<body onload="preloader()">
+
+<div id="loader"></div>
+
+<div class="app" id="app">
+
+  <div th:replace="fragments/header.html :: logo"></div>
+  <header th:replace="fragments/header.html :: menu"></header>
+  <aside th:replace="fragments/aside.html :: aside"></aside>
+
+  <main>
+    <header class="main__header">
+      <div>
+        <a class="main__header-tab" th:href="@{/settings/users}">
+          <h2>Сотрудники</h2>
+        </a>
+        <a class="main__header-tab" th:href="@{/settings/locations}">
+          <h2>Подразделения</h2>
+        </a>
+        <h2 class="main__header-tab" th:text="${title}">Категории</h2>
+      </div>
+      <div>
+        <a class="btn btn-stroke" href="/settings/categories/create">+ Добавить</a>
+      </div>
+    </header>
+    <ul th:each="category: ${categories}">
+      <li th:replace="fragments/tree :: nestedMenu (menuItemsList=${category}, cat='categories')">
+    </ul>
+  </main>
+
+</div>
+
+<section th:include="fragments/footer.html :: footer" th:remove="tag"></section>
+
+</body>
+</html>

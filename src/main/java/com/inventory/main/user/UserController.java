@@ -1,39 +1,48 @@
 package com.inventory.main.user;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.inventory.main.MainController;
+import com.inventory.main.movement.MovementService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Optional;
 
-@Slf4j
-@RestController
-@RequestMapping("/api/users")
-public class UserController {
+@Controller
+public class UserController extends MainController {
 
-    private final UserRepository userRepo;
-//    private PasswordEncoder passwordEncoder;
+  private final UserService userService;
+  public UserController(MovementService movementService, UserService userService) {
+    super(movementService);
+    this.userService = userService;
+  }
 
-    @Autowired
-    public UserController(UserRepository userRepo) {
-        this.userRepo = userRepo;
-//        this.passwordEncoder = passwordEncoder;
+  @GetMapping("/profile")
+  public String getProfilePage(Model model, @AuthenticationPrincipal User user) {
+    model.addAttribute("user", user);
+    model.addAttribute("title", "Мой профиль");
+
+    return "users/profile";
+  }
+
+  @PostMapping("/profile")
+  public String updateUserProfile(
+    @Valid User newUserData,
+    Errors errors,
+    Model model,
+    @AuthenticationPrincipal User user) {
+    if (errors.hasErrors()) {
+      model.addAttribute("user", newUserData);
+      model.addAttribute("title", "Мой профиль");
+
+      return "users/profile";
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<User> findOne(@PathVariable("id") Integer id) {
-        Optional<User> user = userRepo.findById(id);
+    userService.updateProfile(user, newUserData);
 
-        if (user.isPresent()) {
-            return new ResponseEntity<>(user.get(), HttpStatus.OK);
-        }
-
-        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-    }
-
+    return "redirect:/profile";
+  }
 
 }

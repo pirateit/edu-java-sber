@@ -1,17 +1,22 @@
 package com.inventory.main.location;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.inventory.main.item.Item;
 import com.inventory.main.movement.Movement;
 import com.inventory.main.user.User;
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Set;
 
 @Entity
+@DynamicUpdate
 @Table(name = "locations")
 @Getter
 @Setter
@@ -19,48 +24,46 @@ import java.util.Set;
 @AllArgsConstructor
 public class Location {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
-    @Size(min = 2, max = 50, message = "Длина названия должна быть от 2 до 50 символов")
-    private String title;
+  @NotBlank(message = "Обязательное поле")
+  @Size(min = 2, max = 50, message = "Длина названия должна быть от 2 до 50 символов")
+  private String title;
 
-    @Column(name = "parent_id")
-    private Integer parentId;
+  @Column(name = "parent_id")
+  private Integer parentId;
 
-    private Integer depth;
+  private Integer depth;
 
-    @Column(name = "responsible_user_id")
-    private Integer responsibleUserId;
+  @Column(name = "responsible_user_id")
+  private Integer responsibleUserId;
 
-    @Column(name = "created_at")
-    private Timestamp createdAt = new Timestamp(new Date().getTime());
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "responsible_user_id", insertable = false, updatable = false)
+  private User responsibleUser;
 
-    @Column(name = "deleted_at")
-    private Timestamp deletedAt;
+  @OneToMany(mappedBy = "location")
+  @JsonIgnore
+  private Set<User> users;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "responsible_user_id", insertable = false, updatable = false)
-    private User responsibleUser;
+  @OneToMany(mappedBy = "location")
+  @JsonIgnore
+  private Set<Item> items;
 
-    @OneToMany(mappedBy = "location")
-    @JsonIgnore
-    private Set<User> users;
+  @ManyToOne
+  @JoinColumn(name = "parent_id", insertable = false, updatable = false)
+  private Location parent;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id", insertable = false, updatable = false)
-    private Location parent;
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
+  @OrderBy("title ASC")
+  private Set<Location> children;
 
-    @OneToMany(mappedBy = "parent")
-    @OrderBy("title ASC")
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "locationFrom")
+  private Set<Movement> movementsFrom;
 
-    private Set<Location> children;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "locationFrom")
-    private Set<Movement> movementsFrom;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "locationTo")
-    private Set<Movement> movementsTo;
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "locationTo")
+  private Set<Movement> movementsTo;
 
 }

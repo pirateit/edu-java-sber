@@ -1,6 +1,6 @@
 package com.inventory.main.item;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.inventory.main.category.Category;
 import com.inventory.main.location.Location;
 import com.inventory.main.movement.Movement;
 import lombok.*;
@@ -15,51 +15,59 @@ import java.util.Set;
 
 @Data
 @Entity
-@Table(name = "items", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {
-                "prefix", "number"
-        })
+@Table(name = "items", uniqueConstraints = { @UniqueConstraint(columnNames = { "prefix", "number" })
 })
 @AllArgsConstructor
 @NoArgsConstructor
 public class Item {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+  public Item(String prefix, long number, String title, int quantity, int categoryId, int locationId) {
+    this.prefix = prefix;
+    this.number = number;
+    this.title = title;
+    this.quantity = quantity;
+    this.categoryId = categoryId;
+    this.locationId = locationId;
+  }
 
-    @Size(max = 4)
-    private String prefix;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
-    @NotNull
-    private Long number;
+  @Size(max = 4)
+  private String prefix = "";
 
-    @NotBlank
-    private String title;
+  @NotNull(message = "Обязательное поле")
+  private Long number;
 
-    private Integer quantity = 1;
+  @NotBlank(message = "Обязательное поле")
+  private String title;
 
-    @Column(name = "category_id")
-    private Integer categoryId;
+  private Integer quantity = 1;
 
-    @Column(name = "location_id")
-    private Integer locationId;
+  @Column(name = "category_id")
+  private Integer categoryId;
 
-    @Column(name = "created_at")
-    private final Timestamp createdAt = new Timestamp(new Date().getTime());
+  @Column(name = "location_id")
+  private Integer locationId;
 
-    @Column(name = "deleted_at")
-    private Timestamp deletedAt;
+  @Transient
+  @Column(name = "created_at")
+  private final Timestamp createdAt = new Timestamp(new Date().getTime());
 
-    @ManyToOne
-    @JoinColumn(name = "category_id", insertable = false, updatable = false)
-    private Category category;
+  @Column(name = "deleted_at")
+  private Timestamp deletedAt;
 
-    @ManyToOne
-    @JoinColumn(name = "location_id", insertable = false, updatable = false)
-    private Location location;
+  @ManyToOne
+  @JoinColumn(name = "category_id", insertable = false, updatable = false)
+  private Category category;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "item")
-    private Set<Movement> movements;
+  @ManyToOne
+  @JoinColumn(name = "location_id", insertable = false, updatable = false)
+  private Location location;
+
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "item")
+  @OrderBy("created_at ASC")
+  private Set<Movement> movements;
 
 }

@@ -2,42 +2,106 @@
 <html lang="ru" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header.html :: head"></head>
-<body>
-<div th:replace="fragments/header.html :: logo"></div>
-<header th:replace="fragments/header.html :: menu"></header>
-<aside th:replace="fragments/movements/aside.html :: aside"></aside>
-<main>
-    <h1 th:text="${title}"></h1>
+<body onload="preloader()">
+
+<div id="loader"></div>
+
+<div class="app" id="app">
+
+  <div th:replace="fragments/header.html :: logo"></div>
+  <header th:replace="fragments/header.html :: menu"></header>
+  <aside th:replace="fragments/aside.html :: aside"></aside>
+
+  <main>
+    <header class="main__header">
+      <h1 th:text="${title}"></h1>
+      <div>
+        <a class="btn" href="/movements">Все</a>
+        <a class="btn"
+           href="/movements/waiting">В ожидании <span class="movement__count" th:unless="${movementsWaiting == null or movementsWaiting == 0}"
+                                                      th:text="${movementsWaiting}"></span>
+        </a>
+      </div>
+    </header>
+    <form th:unless="${#httpServletRequest.getRequestURI().contains('/waiting')}" class="filter" id="movements-filter"
+          autocomplete="off">
+      <div class="filter__col filter__select">
+        <select id="type" name="type">
+          <option value="">Тип...</option>
+          <option th:each="type : ${T(com.inventory.main.movement.Movement.Type).values()}"
+                  th:value="${type.name()}" th:text="${type.toString()}"
+                  th:selected="${fType != null and fType.name().equals(type.name())}"></option>
+        </select>
+      </div>
+      <div class="filter__col filter__search-bar">
+        <input type="text" name="itemTitle" th:value="${fItemTitle}" placeholder="Название предмета...">
+      </div>
+      <div class="filter__col filter__select">
+        <select id="locations-from" name="locationsFrom" multiple>
+          <option th:each="location : ${locations}" th:value="${location.id}"
+                  th:text="${location.title + ' (ID: ' + location.id + ')'}"
+                  th:selected="${fLocationsFrom != null and fLocationsFrom.contains(location.id)}"></option>
+        </select>
+      </div>
+      <div class="filter__col filter__select">
+        <select id="locations-to" name="locationsTo" multiple>
+          <option th:each="location : ${locations}" th:value="${location.id}"
+                  th:text="${location.title + ' (ID: ' + location.id + ')'}"
+                  th:selected="${fLocationsTo != null and fLocationsTo.contains(location.id)}"></option>
+        </select>
+      </div>
+      <div class="filter__col filter__select">
+        <select id="requested-user" name="user">
+          <option value="">Ответственный...</option>
+          <option th:each="user : ${users}" th:value="${user.id}"
+                  th:text="${user.lastName + ' ' + user.firstName + ' (ID: ' + user.id + ')'}"
+                  th:selected="${fUser != null and fUser.equals(user.id)}"></option>
+        </select>
+      </div>
+      <div class="filter__col">
+        <button class="btn btn-main" type="submit">Применить</button>
+      </div>
+    </form>
     <div style="overflow-x:auto;">
-        <table>
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Дата</th>
-                <th>Тип</th>
-                <th>Предмет</th>
-                <th>Количество</th>
-                <th>Откуда</th>
-                <th>Куда</th>
-                <th>Ответственный</th>
-                <th>Статус</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="movement : ${movements}">
-                <td><a th:href="@{/movements/{id}(id=${movement.id})}" th:text="${movement.id}"></a></td>
-                <td th:text="${#dates.format(movement.getCreatedAt(), 'dd.MM.yyyy HH:mm')}"></td>
-                <td th:text="${movement.type.toString()}"></td>
-                <td th:text="${movement.item.title}"></td>
-                <td th:text="${movement.quantity}"></td>
-                <td th:text="${movement.locationFrom.title}"></td>
-                <td th:text="${movement.locationTo.title}"></td>
-                <td th:text="${movement.user.getLastName() + ' ' + movement.user.getFirstName()}"></td>
-                <td th:text="${movement.status.toString()}"></td>
-            </tr>
-            </tbody>
-        </table>
+      <table>
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Дата</th>
+          <th>Тип</th>
+          <th>Предмет</th>
+          <th>Количество</th>
+          <th>Откуда</th>
+          <th>Куда</th>
+          <th>Ответственный</th>
+          <th>Статус</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="movement : ${movements}">
+          <td><a th:href="@{/movements/{id}(id=${movement.id})}" th:text="${movement.id}"></a></td>
+          <td th:text="${#dates.format(movement.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
+          <td th:text="${movement.type.toString()}"></td>
+          <td><a th:href="@{/items/{id}(id=${movement.item.id})}" th:text="${movement.item.title}"></a></td>
+          <td th:text="${movement.quantity}"></td>
+          <td th:text="${movement.locationFromId != null ? movement.locationFrom.title : '-'}"></td>
+          <td th:text="${movement.locationToId != null ? movement.locationTo.title : '-'}"></td>
+          <td th:text="${movement.user.getLastName() + ' ' + movement.user.getFirstName()}"></td>
+          <td th:text="${movement.status.toString()}"></td>
+        </tr>
+        </tbody>
+      </table>
     </div>
-</main>
+    <div class="pages" th:if="${movements.getTotalPages() > 1}">
+      <a class="pages__page" th:each="i : ${#numbers.sequence(1, movements.getTotalPages())}"
+         th:href="@{${'/movements' + (query.length != 0 ? '?' + query : '')}(page=${i})}" th:text="${i}"
+         th:classappend="${i == movements.getNumber() + 1} ? pages__page_active"></a>
+    </div>
+  </main>
+
+</div>
+
+<section th:include="fragments/footer.html :: footer" th:remove="tag"></section>
+
 </body>
 </html>

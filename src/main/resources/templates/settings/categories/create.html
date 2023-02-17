@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header.html :: head"></head>
+<body onload="preloader()">
+
+<div id="loader"></div>
+
+<div class="app" id="app">
+
+  <div th:replace="fragments/header.html :: logo"></div>
+  <header th:replace="fragments/header.html :: menu"></header>
+  <aside th:replace="fragments/aside.html :: aside"></aside>
+
+  <main>
+    <header class="main__header">
+      <h1 th:text="${title}"></h1>
+    </header>
+    <div class="main__1col">
+      <form class="form" method="POST" th:action="@{/settings/categories/create}"
+            th:object="${category}"
+            id="form">
+        <div class="form__row">
+          <div class="form__row-inputs">
+            <label class="form__label" for="parent-id">Родительская категория</label>
+            <select th:field="*{parentId}" id="parent-id">
+              <option value="">...</option>
+              <option th:each="category : ${categories}" th:value="${category.id}"
+                      th:text="${category.title + ' (ID: ' + category.id + ')'}"></option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form__row">
+          <div class="form__row-inputs">
+            <label class="form__label" for="title">Наименование</label>
+            <input type="text" th:field="*{title}" id="title" required>
+          </div>
+          <div th:if="${#fields.hasErrors('title')}" th:errorclass="form__error" th:errors="*{title}"></div>
+        </div>
+
+        <div class="form__bottom">
+          <a class="btn"
+             th:href="@{/settings/categories}">Отмена</a>
+          <div>
+            <button class="btn btn-main" type="submit" form="form">Сохранить</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </main>
+
+</div>
+
+<section th:include="fragments/footer.html :: footer" th:remove="tag"></section>
+
+</body>
+</html>

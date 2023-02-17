@@ -2,75 +2,121 @@
 <html lang="ru" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header.html :: head"></head>
-<body>
-<div th:replace="fragments/header.html :: logo"></div>
-<header th:replace="fragments/header.html :: menu"></header>
-<aside th:replace="fragments/items/aside.html :: aside"></aside>
-<main>
-    <h1 th:text="${title}"></h1>
-    <form method="POST" th:action="@{/items/{id}(id=${item.id})}" th:object="${item}">
+<body onload="preloader()">
 
-        <input type="hidden" th:field="*{id}" th:value="${item.id}">
+<div id="loader"></div>
 
-        <label for="number">Инв. номер</label>
-        <input type="text" th:field="*{prefix}" th:value="${item.prefix}" placeholder="Префикс" readonly>
-        &dash;
-        <input type="number" id="number" th:field="*{number}" th:value="${item.number}" placeholder="Номер" readonly>
-        <span th:if="${#fields.hasErrors('number')}" th:errors="*{number}"></span>
+<div class="app" id="app">
 
-        <label for="title">Наименование</label>
-        <input type="text" id="title" th:field="*{title}" th:value="${item.title}" placeholder="Наименование">
-        <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+  <div th:replace="fragments/header.html :: logo"></div>
+  <header th:replace="fragments/header.html :: menu"></header>
+  <aside th:replace="fragments/aside.html :: aside"></aside>
 
-        <label for="quantity">Количество</label>
-        <input type="number" id="quantity" th:field="*{quantity}" th:value="${item.quantity}" placeholder="Количество" disabled>
-
-        <div>
-            <input type="hidden" th:field="*{categoryId}" th:value="${item.categoryId}">
-            <input type="hidden" th:field="*{locationId}" th:value="${item.locationId}">
-            <button>Сохранить</button>
+  <main>
+    <header class="main__header">
+      <h1 th:text="${title}"></h1>
+    </header>
+    <div class="main__2col">
+      <div class="main__2col-col">
+        <div class="main__subheader">
+          <h2 class="subtitle">Информация</h2>
         </div>
-    </form>
-    <h2>История</h2>
-    <a class="btn btn-main" th:href="@{/items/{id}/move(id=${item.id})}">Переместить</a>
-    <div style="overflow-x:auto;">
-        <table>
+        <form class="form" method="POST" th:action="@{/items/{id}(id=${item.id})}" th:object="${item}">
+          <div class="form__row">
+            <div class="form__row-inputs">
+              <span class="form__label">Категория</span>
+              <div style="width: 100%;">
+                <div th:replace="fragments/location-tree :: parent (loc=*{category})" th:remove="tag"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form__row">
+            <div class="form__row-inputs">
+              <label class="form__label" for="number">Инв. номер</label>
+              <div class="item__form-row-num">
+                <input type="text" th:field="*{prefix}" placeholder="Префикс"
+                       maxlength="4" th:readonly="${!canUpdate}">
+                &dash;
+                <input type="number" id="number" th:field="*{number}" placeholder="Номер"
+                       th:readonly="${!canUpdate}">
+              </div>
+            </div>
+            <div class="form__error" th:if="${duplicateError != null && duplicateError}">Выбранный номер уже
+              занят
+            </div>
+            <div th:if="${#fields.hasErrors('number')}" th:errorclass="form__error" th:errors="*{number}"></div>
+          </div>
+
+          <div class="form__row">
+            <div class="form__row-inputs">
+              <label class="form__label" for="title">Наименование</label>
+              <input type="text" id="title" th:field="*{title}" th:value="${item.title}" placeholder="Наименование">
+            </div>
+            <div th:if="${#fields.hasErrors('title')}" th:errorclass="form__error" th:errors="*{title}"></div>
+          </div>
+
+          <div class="form__row">
+            <div class="form__row-inputs">
+              <label class="form__label" for="quantity">Количество</label>
+              <input type="number" id="quantity" th:field="*{quantity}" placeholder="Количество" disabled>
+            </div>
+            <div th:if="${#fields.hasErrors('quantity')}" th:errorclass="form__error" th:errors="*{quantity}"></div>
+          </div>
+
+          <div class="form__row">
+            <div class="form__row-inputs">
+              <span class="form__label">Подразделение</span>
+              <div style="width: 100%;">
+                <div th:replace="fragments/location-tree :: parent (loc=*{location})" th:remove="tag"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form__bottom">
+            <div>
+              <input type="hidden" th:field="*{categoryId}">
+              <input type="hidden" th:field="*{locationId}">
+            </div>
+
+            <button class="btn btn-main">Сохранить</button>
+          </div>
+        </form>
+      </div>
+      <div class="main__2col-col">
+        <div class="main__subheader flex">
+          <h2>История</h2>
+          <a class="btn btn-stroke" th:if="${canMove}" th:href="@{/items/{id}/move(id=${item.id})}">Переместить</a>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
             <thead>
             <tr>
-                <th>ID</th>
-                <th>Дата</th>
-                <th>Тип</th>
-                <th>Ответственный</th>
-                <th>Статус</th>
+              <th>ID</th>
+              <th>Дата</th>
+              <th>Тип</th>
+              <th>Ответственный</th>
+              <th>Статус</th>
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <th></th>
-                <td th:text="${#dates.format(item.getCreatedAt(), 'dd.MM.yyyy HH:mm')}"></td>
-                <td>Принято</td>
-                <td>Ответственный</td>
-                <td>Выполнено</td>
-            </tr>
-            <tr th:each="movement : ${movements}">
-                <td><a th:href="@{/movements/{id}(id=${movement.id})}" th:text="${movement.id}"></a></td>
-                <td th:text="${#dates.format(movement.getCreatedAt(), 'dd.MM.yyyy HH:mm')}"></td>
-                <td th:text="${movement.type.toString()}"></td>
-                <td th:text="${movement.user.getLastName() + ' ' + movement.user.getFirstName()}"></td>
-                <td th:text="${movement.status.toString()}"></td>
+            <tr th:each="movement : ${item.movements}">
+              <td><a th:href="@{/movements/{id}(id=${movement.id})}" th:text="${movement.id}"></a></td>
+              <td th:text="${#dates.format(movement.getCreatedAt(), 'dd.MM.yyyy HH:mm')}"></td>
+              <td th:text="${movement.type.toString()}"></td>
+              <td th:text="${movement.user.getLastName() + ' ' + movement.user.getFirstName()}"></td>
+              <td th:text="${movement.status.toString()}"></td>
             </tr>
             </tbody>
-        </table>
-    </div>
-    <h2>Списать</h2>
-    <form method="POST" th:action="@{/items/} + ${item.id} + @{/delete}" th:object="${item}">
-
-        <input type="hidden" th:field="*{id}" th:value="${item.id}">
-
-        <div>
-            <button>Удалить</button>
+          </table>
         </div>
-    </form>
-</main>
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<section th:include="fragments/footer.html :: footer" th:remove="tag"></section>
+
 </body>
 </html>

@@ -2,21 +2,39 @@
 <html lang="ru" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header.html :: head"></head>
-<body>
-<div th:replace="fragments/header.html :: logo"></div>
-<header th:replace="fragments/header.html :: menu"></header>
-<aside th:replace="fragments/settings/aside.html :: aside"></aside>
-<main>
+<body onload="preloader()">
+
+<div id="loader"></div>
+
+<div class="app" id="app">
+
+  <div th:replace="fragments/header.html :: logo"></div>
+  <header th:replace="fragments/header.html :: menu"></header>
+  <aside th:replace="fragments/aside.html :: aside"></aside>
+
+  <main>
     <header class="main__header">
-        <h1 th:text="${title}"></h1>
-        <div>
-            <a class="btn btn-stroke btn-trash" href="/settings/locations/deleted">Корзина</a>
-            <a class="btn btn-stroke" href="/settings/locations/create">+ Добавить</a>
-        </div>
+      <div>
+        <a class="main__header-tab" th:href="@{/settings/users}">
+          <h2>Сотрудники</h2>
+        </a>
+        <h2 class="main__header-tab" th:text="${title}">Подразделения</h2>
+        <a class="main__header-tab" th:href="@{/settings/categories}">
+          <h2>Категории</h2>
+        </a>
+      </div>
+      <div>
+        <a class="btn btn-stroke" href="/settings/locations/create">+ Добавить</a>
+      </div>
     </header>
-    <ul>
-        <li th:replace="fragments/tree :: nestedMenu (menuItemsList=${locations})">
+    <ul th:each="location: ${locations}">
+      <li th:replace="fragments/tree :: nestedMenu (menuItemsList=${location}, cat='locations')">
     </ul>
-</main>
+  </main>
+
+</div>
+
+<section th:include="fragments/footer.html :: footer" th:remove="tag"></section>
+
 </body>
 </html>

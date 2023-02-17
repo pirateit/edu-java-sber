@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header.html :: head"></head>
+<body onload="preloader()">
+
+<div id="loader"></div>
+
+<div class="app" id="app">
+
+  <div th:replace="fragments/header.html :: logo"></div>
+  <header th:replace="fragments/header.html :: menu"></header>
+  <aside th:replace="fragments/aside.html :: aside"></aside>
+
+  <main>
+    <header class="main__header">
+      <h1 th:text="${title}"></h1>
+    </header>
+    <div class="main__1col">
+      <div class="main__1col-col">
+        <form class="form" method="POST" th:object="${item}" id="item-create-form">
+          <div class="form__row">
+            <div class="form__row-inputs">
+              <label class="form__label" for="number">Инв. номер</label>
+              <div class="item__form-row-num">
+                <input type="text" th:field="*{prefix}" id="prefix" placeholder="Префикс" maxlength="4">
+                &dash;
+                <input type="number" id="number" th:field="*{number}" placeholder="Номер">
+              </div>
+            </div>
+            <div class="form__error" th:if="${duplicateError != null && duplicateError}">Выбранный номер уже
+              занят
+            </div>
+            <div th:if="${#fields.hasErrors('number')}" th:errorclass="form__error" th:errors="*{number}"></div>
+          </div>
+
+          <div class="form__row">
+            <div class="form__row-inputs">
+              <label class="form__label" for="title">Наименование</label>
+              <input type="text" id="title" th:field="*{title}" placeholder="Наименование">
+            </div>
+            <div th:if="${#fields.hasErrors('title')}" th:errorclass="form__error" th:errors="*{title}"></div>
+          </div>
+
+          <div class="form__row">
+            <div class="form__row-inputs">
+              <label class="form__label" for="quantity">Количество</label>
+              <input type="number" id="quantity" th:field="*{quantity}" placeholder="Количество">
+            </div>
+            <div th:if="${#fields.hasErrors('quantity')}" th:errorclass="form__error" th:errors="*{quantity}"></div>
+          </div>
+
+          <div class="form__row">
+            <div class="form__row-inputs">
+              <label class="form__label" for="category-id">Категория</label>
+              <select th:field="*{categoryId}" id="category-id" required autocomplete="off">
+                <option value="" selected disabled>Выберите...</option>
+                <option th:each="category : ${categories}" th:value="${category.id}"
+                        th:text="${category.title + ' (ID: ' + category.id + ')'}"
+                        th:data-prefix="${category.prefix}"></option>
+              </select>
+            </div>
+            <div th:if="${#fields.hasErrors('categoryId')}" th:errorclass="form__error" th:errors="*{categoryId}"></div>
+          </div>
+
+          <div class="form__row">
+            <div class="form__row-inputs">
+              <label class="form__label" for="location-id">Подразделение</label>
+              <select th:field="*{locationId}" id="location-id" required autocomplete="off">
+                <option value="" selected disabled>Выберите...</option>
+                <option th:each="location : ${locations}" th:value="${location.id}"
+                        th:text="${location.title + ' (ID: ' + location.id + ')'}"></option>
+              </select>
+            </div>
+            <div th:if="${#fields.hasErrors('locationId')}" th:errorclass="form__error" th:errors="*{locationId}"></div>
+          </div>
+
+          <div class="form__bottom">
+            <div>
+            </div>
+
+            <button class="btn btn-main">Сохранить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<footer th:include="fragments/footer.html :: footer" th:remove="tag"></footer>
+
+</body>
+</html>

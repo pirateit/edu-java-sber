@@ -4,47 +4,71 @@ import com.inventory.main.user.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
 @Table(name = "coordinations")
+@IdClass(CoordinationKey.class)
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Coordination {
 
-    @EmbeddedId
-    private CoordinationKey id;
+  @Id
+  @Column(name = "movement_id", nullable = false)
+  private Integer movementId;
 
-    private Status status = Status.WAITING;
+  @Id
+  @Column(name = "chief_user_id", nullable = false)
+  private Integer chiefUserId;
 
-    private String comment;
+  @Id
+  @Column(name = "created_at")
+  private final Timestamp createdAt = new Timestamp(new Date().getTime());
 
-    @ManyToOne
-    @JoinColumn(name = "movement_id", insertable = false, updatable = false)
-    private Movement movement;
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
+  private Status status = Status.WAITING;
 
-    @ManyToOne
-    @JoinColumn(name = "chief_user_id", insertable = false, updatable = false)
-    private User chief;
+  private String comment;
 
-    public enum Status {
-        WAITING {
-            public String toString() {
-                return "В ожидании";
-            }
-        },
-        COORDINATED {
-            public String toString() {
-                return "Согласовано";
-            }
-        },
-        REFUSED {
-            public String toString() {
-                return "Отказано";
-            }
-        }
+  @ManyToOne
+  @JoinColumn(name = "movement_id", insertable = false, updatable = false)
+  private Movement movement;
 
+  @ManyToOne
+  @JoinColumn(name = "chief_user_id", insertable = false, updatable = false)
+  private User chief;
+
+  public enum Status {
+    WAITING {
+      public String toString() {
+        return "В ожидании";
+      }
+    },
+    COORDINATED {
+      public String toString() {
+        return "Согласовано";
+      }
+    },
+    SENT {
+      public String toString() {
+        return "Отправлено";
+      }
+    },
+    ACCEPTED {
+      public String toString() {
+        return "Принято";
+      }
+    },
+    REFUSED {
+      public String toString() {
+        return "Отказано";
+      }
     }
+
+  }
 
 }

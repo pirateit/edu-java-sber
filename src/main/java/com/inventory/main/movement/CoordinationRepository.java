@@ -3,9 +3,11 @@ package com.inventory.main.movement;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface CoordinationRepository extends CrudRepository<Coordination, CoordinationKey> {
+import java.util.Optional;
 
-    Iterable<Coordination> findAllByMovementIdOrderByIdAsc(Integer movementId);
+@Repository
+interface CoordinationRepository extends CrudRepository<Coordination, CoordinationKey> {
+
+  Optional<Coordination> findTopByMovementIdOrderByCreatedAtDesc(int movementId);
 
 }

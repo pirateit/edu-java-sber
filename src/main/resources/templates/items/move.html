@@ -2,33 +2,77 @@
 <html lang="ru" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header.html :: head"></head>
-<body>
-<div th:replace="fragments/header.html :: logo"></div>
-<header th:replace="fragments/header.html :: menu"></header>
-<aside th:replace="fragments/items/aside.html :: aside"></aside>
-<main>
-    <h1 th:text="${title}"></h1>
-    <form method="POST" th:action="@{/items/{id}/move(id=${item.id})}" th:object="${movement}">
-        <select th:field="*{type}">
-            <option th:each="type : ${T(com.inventory.main.movement.Movement.Type).values()}"
-                    th:value="${type.name()}" th:text="${type.toString()}"></option>
-        </select>
-        <span th:if="${#fields.hasErrors('type')}" th:errors="*{type}"></span>
+<body onload="preloader()">
 
-        <label for="quantity">Количество</label>
-        <input type="number" id="quantity" th:field="*{quantity}" min="1" th:max="${item.quantity}">
+<div id="loader"></div>
 
-        <select th:field="*{locationToId}">
-            <option th:each="location : ${locations}" th:value="${location.id}" th:text="${location.title + ' (' + location.id + ')'}"></option>
-        </select>
-        <span th:if="${#fields.hasErrors('locationToId')}" th:errors="*{locationToId}"></span>
+<div class="app" id="app">
 
-        <textarea th:field="*{comment}" placeholder="Комментарий (опционально)"></textarea>
+  <div th:replace="fragments/header.html :: logo"></div>
+  <header th:replace="fragments/header.html :: menu"></header>
+  <aside th:replace="fragments/aside.html :: aside"></aside>
 
-        <div>
-            <button>Сохранить</button>
-        </div>
-    </form>
-</main>
+  <main class="main">
+    <header class="main__header">
+      <h1 th:text="${title}"></h1>
+    </header>
+    <div class="main__1col">
+      <div class="main__1col-col">
+        <form class="form" method="POST" th:object="${movement}">
+          <div class="form__row">
+            <div class="form__row-inputs">
+              <label class="form__label" for="type">Тип перемещения</label>
+              <select th:field="*{type}" id="type">
+                <option th:each="type : ${T(com.inventory.main.movement.Movement.Type).values()}"
+                        th:value="${type.name()}" th:text="${type.toString()}"></option>
+              </select>
+            </div>
+            <div th:if="${#fields.hasErrors('type')}" th:errorclass="form__error" th:errors="*{type}"></div>
+          </div>
+
+          <div class="form__row">
+            <div class="form__row-inputs">
+              <label class="form__label" for="quantity">Количество</label>
+              <input type="number" th:field="*{quantity}" id="quantity" min="1" th:max="${item.quantity}">
+            </div>
+            <div th:if="${#fields.hasErrors('quantity')}" th:errorclass="form__error" th:errors="*{quantity}"></div>
+          </div>
+
+          <div class="form__row">
+            <div class="form__row-inputs">
+              <label class="form__label" for="location">Куда</label>
+              <select th:field="*{locationToId}" id="location" autocomplete="off">
+                <option value="" hidden>Подразделение...</option>
+                <option th:each="location : ${locations}" th:value="${location.id}"
+                        th:text="${location.title + ' (' + location.id + ')'}"></option>
+              </select>
+            </div>
+            <div class="form__error" th:if="${locationToError}">Для перемещения необходимо выбрать подразделение</div>
+            <dib th:if="${#fields.hasErrors('locationToId')}" th:errorclass="form__error"
+                 th:errors="*{locationToId}"></dib>
+          </div>
+
+          <div class="form__row">
+            <div class="form__row-inputs">
+              <label class="form__label" for="location">Комментарий</label>
+              <textarea th:field="*{comment}" placeholder="Опционально"></textarea>
+            </div>
+          </div>
+
+          <div class="form__bottom">
+            <div>
+            </div>
+
+            <button class="btn btn-main">Сохранить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<section th:include="fragments/footer.html :: footer" th:remove="tag"></section>
+
 </body>
 </html>

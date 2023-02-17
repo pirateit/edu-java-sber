@@ -2,73 +2,89 @@
 <html lang="ru" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header.html :: head"></head>
-<body>
-<div th:replace="fragments/header.html :: logo"></div>
-<header th:replace="fragments/header.html :: menu"></header>
-<aside th:replace="fragments/items/aside.html :: aside"></aside>
-<main>
+<body onload="preloader()">
+
+<div id="loader"></div>
+
+<div class="app" id="app">
+
+  <div th:replace="fragments/header.html :: logo"></div>
+  <header th:replace="fragments/header.html :: menu"></header>
+  <aside th:replace="fragments/aside.html :: aside"></aside>
+
+  <main>
     <header class="main__header">
-        <h1 th:text="${title}"></h1>
-        <div>
-            <a class="btn btn-stroke btn-trash" href="/items/deleted">Корзина</a>
-            <a class="btn btn-stroke" href="/items/create">+ Добавить</a>
-        </div>
+      <h1 th:text="${title}"></h1>
+      <div>
+        <a sec:authorize="hasAnyRole('OWNER', 'ADMIN')"
+           th:unless="${#httpServletRequest.getRequestURI().startsWith('/items/deleted')}"
+           class="btn btn-stroke btn-trash" href="/items/deleted">Корзина</a>
+        <a sec:authorize="hasAnyRole('OWNER', 'ADMIN')"
+           th:unless="${#httpServletRequest.getRequestURI().startsWith('/items/deleted')}" class="btn btn-stroke"
+           href="/items/create">+ Добавить</a>
+      </div>
     </header>
-    <form class="filter" action="items" method="GET">
-        <div class="filter__col filter__search-bar">
-            <input type="text" name="title" th:value="${param.title}" placeholder="Поиск по названию...">
-        </div>
-        <div class="filter__col filter__select">
-            <select id="locations" name="locations" multiple>
-                <option th:each="location : ${locations}" th:value="${location.id}"
-                        th:text="${location.title + ' (ID: ' + location.id + ')'}"></option>
-            </select>
-        </div>
-        <div class="filter__col filter__select">
-            <select id="categories" name="categories" multiple>
-                <option th:each="category : ${categories}" th:value="${category.id}"
-                        th:text="${category.name + ' (ID: ' + category.id + ')'}"></option>
-            </select>
-        </div>
-        <div class="filter__col">
-            <button class="btn btn-main" type="submit">Применить</button>
-        </div>
+    <form class="filter" method="GET" id="items-filter">
+      <div class="filter__col filter__search-bar">
+        <input type="text" name="title" th:value="${param.title}" placeholder="Поиск по названию">
+      </div>
+      <div class="filter__col filter__select">
+        <select id="locations" name="locations" multiple>
+          <option th:each="location : ${locations}" th:value="${location.id}"
+                  th:text="${location.title + ' (ID: ' + location.id + ')'}"
+                  th:selected="${fLocations != null and fLocations.contains(location.id)}"></option>
+        </select>
+      </div>
+      <div class="filter__col filter__select">
+        <select id="categories" name="categories" multiple>
+          <option th:each="category : ${categories}" th:value="${category.id}"
+                  th:text="${category.title + ' (ID: ' + category.id + ')'}"
+                  th:selected="${fCategories != null and fCategories.contains(category.id)}"></option>
+        </select>
+      </div>
+      <div class="filter__col">
+        <button class="btn btn-main" type="submit">Применить</button>
+      </div>
     </form>
     <div style="overflow-x:auto;">
-        <table>
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Инв. номер</th>
-                <th>Категория</th>
-                <th>Наименование</th>
-                <th>Количество</th>
-                <th>Подразделение</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="item : ${items}">
-                <td><a th:href="@{/items/{id}(id=${item.id})}" th:text="${item.id}"></a></td>
-                <td>
-                    <a th:href="@{/items/{id}(id=${item.id})}"
-                       th:text="${item.prefix != '' ? item.prefix + '-' + item.number : item.number}">
-                    </a>
-                </td>
-                <td><a th:href="@{/items?category={id}(id=${item.categoryId})}" th:text="${item.category.name}"></a>
-                </td>
-                <td><a th:href="@{/items/{id}(id=${item.id})}" th:text="${item.title}"></a></td>
-                <td th:text="${item.quantity}"></td>
-                <td th:text="${item.location.title}"></td>
-            </tr>
-            </tbody>
-        </table>
+      <table>
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Инв. номер</th>
+          <th>Категория</th>
+          <th>Наименование</th>
+          <th>Количество</th>
+          <th>Подразделение</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${items}">
+          <td><a th:href="@{/items/{id}(id=${item.id})}" th:text="${item.id}"></a></td>
+          <td>
+            <a th:href="@{/items/{id}(id=${item.id})}"
+               th:text="${item.prefix != '' ? item.prefix + '-' + item.number : item.number}">
+            </a>
+          </td>
+          <td th:text="${item.category.title}"></a>
+          </td>
+          <td><a th:href="@{/items/{id}(id=${item.id})}" th:text="${item.title}"></a></td>
+          <td th:text="${item.quantity}"></td>
+          <td th:text="${item.location.title}"></td>
+        </tr>
+        </tbody>
+      </table>
     </div>
     <div class="pages" th:if="${items.getTotalPages() > 1}">
-        <a class="pages__page" th:each="i : ${#numbers.sequence(1, items.getTotalPages())}"
-           th:href="@{items(size=${items.getSize()}, page=${i})}" th:text="${i}"
-           th:classappend="${i == items.getNumber() + 1} ? pages__page_active"></a>
+      <a class="pages__page" th:each="i : ${#numbers.sequence(1, items.getTotalPages())}"
+         th:href="@{${'/items' + (query.length != 0 ? '?' + query : '')}(page=${i})}" th:text="${i}"
+         th:classappend="${i == items.getNumber() + 1} ? pages__page_active"></a>
     </div>
-</main>
-<footer th:include="fragments/footer.html :: footer" th:remove="tag"></footer>
+  </main>
+
+</div>
+
+<section th:include="fragments/footer.html :: footer" th:remove="tag"></section>
+
 </body>
 </html>

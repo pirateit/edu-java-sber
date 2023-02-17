@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header.html :: head"></head>
+<body onload="preloader()">
+
+<div id="loader"></div>
+
+<div class="app" id="app">
+
+  <div th:replace="fragments/header.html :: logo"></div>
+  <header th:replace="fragments/header.html :: menu"></header>
+  <aside th:replace="fragments/aside.html :: aside"></aside>
+
+  <main class="main">
+    <header class="main__header">
+      <h1 th:text="${title}"></h1>
+    </header>
+    <div class="main__2col">
+      <div class="main__2col-col">
+        <form class="form" method="POST" th:action="@{/profile}" th:object="${user}">
+          <div class="form__row">
+            <div class="form__row-inputs">
+              <label class="form__label">Фамилия Имя</label>
+              <div class="item__form-row-num">
+                <input type="text" th:field="*{lastName}" placeholder="Фамилия" maxlength="35">
+                &nbsp;
+                <input type="text" th:field="*{firstName}" placeholder="Имя" maxlength="35">
+              </div>
+            </div>
+            <div th:if="${#fields.hasErrors('lastName')}" th:errorclass="form__error" th:errors="*{lastName}"></div>
+            <div th:if="${#fields.hasErrors('firstName')}" th:errorclass="form__error" th:errors="*{firstName}"></div>
+          </div>
+
+          <div class="form__row">
+            <div class="form__row-inputs">
+              <label class="form__label" for="email">Email</label>
+              <input type="text" id="email" th:field="*{email}">
+            </div>
+            <div th:if="${#fields.hasErrors('email')}" th:errorclass="form__error" th:errors="*{email}"></div>
+          </div>
+
+          <div class="form__row">
+            <div class="form__row-inputs">
+              <label class="form__label" for="phone">Телефон</label>
+              <input type="number" id="phone" th:field="*{phone}">
+            </div>
+            <div th:if="${#fields.hasErrors('phone')}" th:errorclass="form__error" th:errors="*{phone}"></div>
+          </div>
+
+          <div class="form__row">
+            <div class="form__row-inputs">
+              <label class="form__label" for="password">Новый пароль</label>
+              <input type="password" id="password" th:field="*{password}">
+            </div>
+            <div th:if="${#fields.hasErrors('password')}" th:errorclass="form__error" th:errors="*{password}"></div>
+          </div>
+
+          <div class="form__bottom">
+            <div>
+              <input type="hidden" th:field="*{locationId}">
+            </div>
+
+            <button class="btn btn-main">Сохранить</button>
+          </div>
+        </form>
+      </div>
+      <div class="main__2col-col">
+        <div class="form">
+          <div class="form__row">
+            <div class="form__row-inputs">
+              <label class="form__label">Роль</label>
+              <span th:text="${user.role.toString}"></span>
+            </div>
+          </div>
+          <div class="form__row">
+            <div class="form__row-inputs">
+              <label class="form__label">Подразделение</label>
+              <div th:replace="fragments/location-tree :: parent (loc=*{user.location})" th:remove="tag"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<section th:include="fragments/footer.html :: footer" th:remove="tag"></section>
+
+</body>
+</html>
