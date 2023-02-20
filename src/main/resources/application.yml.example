@@ -1,0 +1,83 @@
+server:
+  error:
+    whitelabel:
+      enabled: false
+    path: /error
+  servlet:
+    session:
+      timeout: 1440m
+      cookie:
+        http-only: true
+#change this only in real server with ssl
+#        secure: true
+
+spring:
+  main:
+    banner-mode: off
+  datasource:
+    url: jdbc:postgresql://${settings.database.host}/${settings.database.name}?useUnicode=yes&characterEncoding=UTF-8&characterSetResults=UTF-8
+    username: ${settings.database.username}
+    password: ${settings.database.password}
+    driver-class-name: org.postgresql.Driver
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
+  jpa:
+    open-in-view: true
+  profiles:
+    active: dev
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  thymeleaf:
+    cache: false
+  jpa:
+   show-sql: true
+
+#change settings to development database
+settings:
+  database:
+    host: localhost
+    name: inventory
+    username: postgres
+    password: postgres
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+
+settings:
+  database:
+    host: localhost
+    name: inventory-test
+    username: postgres
+    password: postgres
+
+logging:
+  level:
+    root: off
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  thymeleaf:
+    cache: true
+
+settings:
+  database:
+    host: localhost
+    name: inventory
+    username: postgres
+    password: postgres
+
+logging:
+  level:
+    org:
+      springframework: WARNING
