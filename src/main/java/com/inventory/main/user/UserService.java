@@ -50,6 +50,10 @@ public class UserService implements UserDetailsService {
     return userRepository.findById(userId);
   }
 
+  public Optional<User> getByEmail(String email) {
+    return userRepository.findByEmail(email);
+  }
+
   public Iterable<User> getUsersByLocations(Set<Integer> locations) {
     return userRepository.findByLocationIdInAndDeletedAtIsNullOrderByLastNameAscFirstNameAsc(locations);
   }
@@ -130,11 +134,10 @@ public class UserService implements UserDetailsService {
       }
     }
 
-    user.setDeletedAt(new Timestamp(new Date().getTime()));
-
-    userRepository.save(user);
+    userRepository.delete(user);
   }
 
+  @Transactional
   public void restore(int id) {
     userRepository.restoreById(id);
   }

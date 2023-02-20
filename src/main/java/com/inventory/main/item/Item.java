@@ -4,6 +4,7 @@ import com.inventory.main.category.Category;
 import com.inventory.main.location.Location;
 import com.inventory.main.movement.Movement;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -13,22 +14,15 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Set;
 
-@Data
 @Entity
 @Table(name = "items", uniqueConstraints = { @UniqueConstraint(columnNames = { "prefix", "number" })
 })
+@SQLDelete(sql = "UPDATE items SET deleted_at = NOW() WHERE id = ? ;")
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Item {
-
-  public Item(String prefix, long number, String title, int quantity, int categoryId, int locationId) {
-    this.prefix = prefix;
-    this.number = number;
-    this.title = title;
-    this.quantity = quantity;
-    this.categoryId = categoryId;
-    this.locationId = locationId;
-  }
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -69,5 +63,14 @@ public class Item {
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "item")
   @OrderBy("created_at ASC")
   private Set<Movement> movements;
+
+  public Item(String prefix, long number, String title, int quantity, int categoryId, int locationId) {
+    this.prefix = prefix;
+    this.number = number;
+    this.title = title;
+    this.quantity = quantity;
+    this.categoryId = categoryId;
+    this.locationId = locationId;
+  }
 
 }

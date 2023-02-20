@@ -6,6 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.Set;
 
 @Repository
@@ -13,6 +14,8 @@ public interface LocationRepository extends CrudRepository<Location, Integer> {
 
   @Override
   Set<Location> findAll();
+
+  Optional<Location> findByTitle(String title);
 
   Set<Location> findAllByOrderByIdAsc();
 

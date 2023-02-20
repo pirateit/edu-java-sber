@@ -7,10 +7,13 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.Set;
 
 @Repository
 public interface CategoryRepository extends CrudRepository<Category, Integer> {
+
+  Optional<Category> findByTitle(String title);
 
   Set<Category> findAllByDepthOrderByIdAsc(int depth);
 

@@ -172,7 +172,7 @@ public class ItemController extends MainController {
     Set<Location> userLocations = locationService.getUserLocations(user.getId());
 
     if (item.isEmpty() || !userLocations.contains(item.get().getLocation()) && (!request.isUserInRole(User.Role.OWNER.name()) && !request.isUserInRole(User.Role.ADMIN.name()))) {
-      return "redirect:/items";
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     }
 
     if (errors.hasErrors() || (itemByPrefixAndNumber.isPresent() && item.get() != itemByPrefixAndNumber.get())) {

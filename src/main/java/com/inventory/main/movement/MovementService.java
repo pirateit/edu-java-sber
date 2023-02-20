@@ -7,7 +7,6 @@ import com.inventory.main.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +19,7 @@ public class MovementService {
   private final CoordinationRepository coordinationRepository;
   private final ItemRepository itemRepository;
 
-  private int pageSize = 20;
+  private final int pageSize = 20;
 
   public MovementService(MovementRepository movementRepository, CoordinationRepository coordinationRepository, ItemRepository itemRepository) {
     this.movementRepository = movementRepository;
@@ -124,8 +123,85 @@ public class MovementService {
     return movement;
   }
 
-  public Movement update(Movement movement) {
-    return movementRepository.save(movement);
+  @Transactional
+  public void coordinate(Movement movement, Coordination coordination, User user) {
+    switch (coordination.getStatus()) {
+      case REFUSED -> {
+        movement.getCoordinations().last().setStatus(coordination.getStatus());
+        movement.getCoordinations().last().setComment(coordination.getComment());
+        movement.setStatus(Movement.Status.CANCELLED);
+
+        movementRepository.save(movement);
+      }
+      case COORDINATED -> {
+        movement.getCoordinations().last().setStatus(coordination.getStatus());
+        movement.getCoordinations().last().setComment(coordination.getComment());
+
+        if (user.getLocation().getParentId() == null) {
+          movement.setStatus(Movement.Status.APPROVED);
+
+          movementRepository.save(movement);
+        } else {
+          Integer chiefUserId = null;
+          Location parentLocation = movement.getCoordinations().last().getChief().getLocation().getParent();
+
+          while (chiefUserId == null) {
+            chiefUserId = parentLocation.getResponsibleUserId();
+            parentLocation = parentLocation.getParent();
+          }
+
+          Coordination nextCoordination = new Coordination(movement.getId(), chiefUserId, Coordination.Status.WAITING, null);
+
+          coordinationRepository.save(nextCoordination);
+        }
+      }
+      case SENT -> {
+        Coordination nextCoordination = new Coordination(movement.getId(), user.getId(), Coordination.Status.SENT, coordination.getComment());
+
+        coordinationRepository.save(nextCoordination);
+
+        movement.setStatus(Movement.Status.SENT);
+
+        movementRepository.save(movement);
+      }
+      case ACCEPTED -> {
+        Item item = movement.getItem();
+
+        if (item.getQuantity() - movement.getQuantity() > 0 && movement.getType() == Movement.Type.MOVEMENT) {
+          Optional<Item> lastItem = itemRepository.findTopByCategoryIdOrderByIdDesc(item.getCategoryId());
+
+          item.setQuantity(item.getQuantity() - movement.getQuantity());
+
+          itemRepository.save(item);
+
+          Item newItem = itemRepository.save(new Item(
+            item.getCategory().getPrefix() == null ? "" : item.getCategory().getPrefix(),
+            lastItem.get().getNumber() + 1,
+            item.getTitle(),
+            movement.getQuantity(),
+            item.getCategoryId(),
+            movement.getLocationToId()));
+
+          Movement newItemFirstMovement = new Movement(Movement.Type.MOVEMENT, newItem.getId(), newItem.getQuantity(), newItem.getLocationId(), user.getId(), Movement.Status.SUCCESS);
+
+          movementRepository.save(newItemFirstMovement);
+        } else if (item.getQuantity() - movement.getQuantity() > 0 && movement.getType() == Movement.Type.WRITE_OFF) {
+          item.setQuantity(item.getQuantity() - movement.getQuantity());
+        } else if (movement.getType() == Movement.Type.WRITE_OFF) {
+          itemRepository.deleteById(item.getId());
+        } else {
+          item.setLocationId(user.getLocationId());
+        }
+
+        movement.setStatus(Movement.Status.SUCCESS);
+
+        Coordination newCoordination = new Coordination(movement.getId(), user.getId(), Coordination.Status.ACCEPTED, coordination.getComment());
+
+        coordinationRepository.save(newCoordination);
+
+        movementRepository.save(movement);
+      }
+    }
   }
 
 }

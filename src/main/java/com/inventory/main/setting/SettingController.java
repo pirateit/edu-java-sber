@@ -2,7 +2,6 @@ package com.inventory.main.setting;
 
 import com.inventory.main.MainController;
 import com.inventory.main.category.Category;
-import com.inventory.main.category.CategoryRepository;
 import com.inventory.main.category.CategoryService;
 import com.inventory.main.location.Location;
 import com.inventory.main.location.LocationService;

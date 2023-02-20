@@ -7,7 +7,6 @@ import com.inventory.main.location.Location;
 import com.inventory.main.location.LocationService;
 import com.inventory.main.user.User;
 import com.inventory.main.user.UserService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -19,7 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Controller
 @RequestMapping("/movements")
 public class MovementController extends MainController {
@@ -45,7 +43,7 @@ public class MovementController extends MainController {
   }
 
   @GetMapping
-  public String getMovements(
+  public String getMovementsPage(
     @RequestParam(name = "page", required = false) Integer page,
     @RequestParam(name = "size", required = false) Integer size,
     @RequestParam(name = "type", required = false) Movement.Type type,
@@ -94,7 +92,7 @@ public class MovementController extends MainController {
   }
 
   @GetMapping("/waiting")
-  public String getWaitingMovements(
+  public String getWaitingMovementsPage(
     @RequestParam(name = "page", required = false) Integer page,
     @RequestParam(name = "size", required = false) Integer size,
     Model model,
@@ -112,7 +110,7 @@ public class MovementController extends MainController {
   }
 
   @GetMapping("/{id}")
-  public String getMovement(@PathVariable("id") Integer id, Model model, @AuthenticationPrincipal User user, HttpServletRequest request) {
+  public String getMovementPage(@PathVariable("id") Integer id, Model model, @AuthenticationPrincipal User user, HttpServletRequest request) {
     Optional<Movement> movement = movementService.getById(id);
 
     if (movement.isEmpty()) {
@@ -150,92 +148,28 @@ public class MovementController extends MainController {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
-    Optional<Coordination> lastCoordination = coordinationService.getLastByMovementId(id);
-
-    if (lastCoordination.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-    }
+    Coordination lastCoordination = movement.get().getCoordinations().last();
 
     switch (coordination.getStatus()) {
-      case REFUSED -> {
-        if (!lastCoordination.get().getChiefUserId().equals(user.getId())) {
+      case REFUSED, COORDINATED -> {
+        if (lastCoordination.getChiefUserId() != (user.getId())) {
           throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-        }
-
-        lastCoordination.get().setStatus(coordination.getStatus());
-        lastCoordination.get().setComment(coordination.getComment());
-
-        movement.get().setStatus(Movement.Status.CANCELLED);
-
-        movementService.update(movement.get());
-      }
-      case COORDINATED -> {
-        if (!lastCoordination.get().getChiefUserId().equals(user.getId())) {
-          throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-        }
-
-        lastCoordination.get().setStatus(coordination.getStatus());
-
-        lastCoordination.get().setComment(coordination.getComment());
-
-        if (user.getLocation().getParentId() == null) {
-          movement.get().setStatus(Movement.Status.APPROVED);
-
-          movementService.update(movement.get());
-        } else {
-          Integer chiefUserId = null;
-          Location parentLocation = lastCoordination.get().getChief().getLocation().getParent();
-
-          while (chiefUserId == null) {
-            chiefUserId = parentLocation.getResponsibleUserId();
-            parentLocation = parentLocation.getParent();
-          }
-
-          coordinationService.create(id, chiefUserId);
         }
       }
       case SENT -> {
         Set<Location> userLocations = locationService.getUserLocations(user.getId());
-//        !movement.get().getRequestedUserId().equals(user.getId())
         if (!userLocations.contains(movement.get().getLocationFrom())) {
           throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
-
-        coordinationService.create(id, user.getId(), Coordination.Status.SENT, coordination.getComment());
-
-        movement.get().setStatus(Movement.Status.SENT);
-
-        movementService.update(movement.get());
       }
       case ACCEPTED -> {
         if (!movement.get().getLocationTo().getResponsibleUserId().equals(user.getId())) {
           throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
-
-        Item item = movement.get().getItem();
-
-        if (item.getQuantity() - movement.get().getQuantity() > 0 && movement.get().getType() == Movement.Type.MOVEMENT) {
-          Optional<Item> lastItem = itemService.getLastInCategory(item.getCategoryId());
-          Item newItem = new Item(
-            item.getCategory().getPrefix() == null ? "" : item.getCategory().getPrefix(),
-            lastItem.get().getNumber() + 1, item.getTitle(), movement.get().getQuantity(), item.getCategoryId(), movement.get().getLocationToId());
-
-          item.setQuantity(item.getQuantity() - movement.get().getQuantity());
-          itemService.create(newItem, user);
-        } else if (item.getQuantity() - movement.get().getQuantity() > 0 && movement.get().getType() == Movement.Type.WRITE_OFF) {
-          item.setQuantity(item.getQuantity() - movement.get().getQuantity());
-        } else if (movement.get().getType() == Movement.Type.WRITE_OFF) {
-          itemService.delete(item.getId());
-        } else {
-          item.setLocationId(user.getLocationId());
-        }
-
-        movement.get().setStatus(Movement.Status.SUCCESS);
-
-        coordinationService.create(id, user.getId(), Coordination.Status.ACCEPTED, coordination.getComment());
-        movementService.update(movement.get());
       }
     }
+
+    movementService.coordinate(movement.get(), coordination, user);
 
     return "redirect:/movements/" + id;
   }

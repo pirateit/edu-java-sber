@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS locations
   title               varchar(50) NOT NULL,
   parent_id           int,
   depth               int,
-  responsible_user_id int
+  responsible_user_id int,
+  deleted_at          timestamptz
 );
 
 CREATE TABLE IF NOT EXISTS users
@@ -15,7 +16,7 @@ CREATE TABLE IF NOT EXISTS users
   last_name   varchar(50)         NOT NULL,
   first_name  varchar(50)         NOT NULL,
   email       varchar(100) UNIQUE NOT NULL,
-  phone       varchar(11)  UNIQUE CHECK ( LENGTH(phone) = 11 ),
+  phone       varchar(11) UNIQUE CHECK ( LENGTH(phone) = 11 ),
   password    varchar             NOT NULL,
   location_id int                 NOT NULL DEFAULT 1,
   role        varchar(35)         NOT NULL DEFAULT 'USER',
@@ -26,11 +27,11 @@ CREATE TABLE IF NOT EXISTS users
 
 CREATE TABLE IF NOT EXISTS categories
 (
-  id         serial PRIMARY KEY,
-  title      varchar     NOT NULL,
-  prefix     varchar(4) UNIQUE    DEFAULT '',
-  parent_id  int,
-  depth      int
+  id        serial PRIMARY KEY,
+  title     varchar NOT NULL,
+  prefix    varchar(4) DEFAULT '',
+  parent_id int,
+  depth     int
 );
 
 CREATE TABLE IF NOT EXISTS items

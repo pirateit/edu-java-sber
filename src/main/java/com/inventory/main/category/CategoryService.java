@@ -32,15 +32,17 @@ public class CategoryService {
     return categoryRepository.findById(categoryId);
   }
 
+  public Optional<Category> getByTitle(String categoryTitle) {
+    return categoryRepository.findByTitle(categoryTitle);
+  }
+
   public Category create(Category category) {
-    if (category.getParentId() != null) {
+    if (category.getParentId() == null) {
+      category.setDepth(1);
+    } else {
       Integer parentDepth = categoryRepository.findById(category.getParentId()).get().getDepth();
 
-      if (parentDepth == null) {
-        category.setDepth(1);
-      } else {
-        category.setDepth(parentDepth + 1);
-      }
+      category.setDepth(parentDepth + 1);
     }
 
     category.setTitle(category.getTitle().trim());

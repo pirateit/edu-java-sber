@@ -61,14 +61,7 @@ public class ItemService {
   public Item create(Item item, User user) {
     item = itemRepository.save(item);
 
-    Movement movement = new Movement();
-
-    movement.setType(Movement.Type.MOVEMENT);
-    movement.setItemId(item.getId());
-    movement.setQuantity(item.getQuantity());
-    movement.setLocationToId(item.getLocationId());
-    movement.setRequestedUserId(user.getId());
-    movement.setStatus(Movement.Status.SUCCESS);
+    Movement movement = new Movement(Movement.Type.MOVEMENT, item.getId(), item.getQuantity(), item.getLocationId(), user.getId(), Movement.Status.SUCCESS);
 
     movementRepository.save(movement);
 
@@ -78,14 +71,5 @@ public class ItemService {
   public Item update(Item item) {
     return itemRepository.save(item);
   }
-
-  public void delete(Item item) {
-    itemRepository.deleteById(item.getId());
-  }
-
-  public void delete(int itemId) {
-    itemRepository.deleteById(itemId);
-  }
-
 
 }

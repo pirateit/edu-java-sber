@@ -12,15 +12,15 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.Set;
 
 @Entity
 @DynamicUpdate
 @Table(name = "locations")
+@SQLDelete(sql = "UPDATE locations SET deleted_at = NOW() WHERE id = ? ;")
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PUBLIC, force = true)
+@NoArgsConstructor
 @AllArgsConstructor
 public class Location {
 
@@ -39,6 +39,9 @@ public class Location {
 
   @Column(name = "responsible_user_id")
   private Integer responsibleUserId;
+
+  @Column(name = "deleted_at")
+  private Timestamp deletedAt;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "responsible_user_id", insertable = false, updatable = false)

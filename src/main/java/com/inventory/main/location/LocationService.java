@@ -23,6 +23,10 @@ public class LocationService {
     return this.locationRepository.findById(locationId);
   }
 
+  public Optional<Location> getByTitle(String locationTitle) {
+    return this.locationRepository.findByTitle(locationTitle);
+  }
+
   public Set<Location> getAll() {
     return locationRepository.findAll();
   }
@@ -34,16 +38,6 @@ public class LocationService {
   public Set<Location> getParents() {
     return locationRepository.findAllByParentIdIsNullOrderByIdAsc();
   }
-
-//  public Location getChildren(Location parent) {
-//    parent.setChildren(locationRepository.findByParentIdOrderByTitleAsc(parent.getId()));
-//
-//    if (!parent.getChildren().isEmpty()) {
-//      parent.getChildren().forEach(this::getChildren);
-//    }
-//
-//    return parent;
-//  }
 
   public Set<Location> getUserLocations(int userId) {
     Set<Location> responsibleUserLocations = locationRepository.findByResponsibleUserId(userId);

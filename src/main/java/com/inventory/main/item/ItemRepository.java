@@ -43,11 +43,6 @@ public interface ItemRepository extends CrudRepository<Item, Integer> {
 
   Optional<Item> findTopByCategoryIdOrderByIdDesc(int categoryId);
 
-  @Override
-  @Modifying
-  @Query(value = "UPDATE items SET deleted_at = NOW() WHERE id = :id ;", nativeQuery = true)
-  void deleteById(@Param("id") Integer id);
-
   boolean existsByCategoryId(int locationId);
 
 }

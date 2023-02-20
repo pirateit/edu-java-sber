@@ -6,4 +6,4 @@ COPY target/main-0.0.1-SNAPSHOT.jar inventory.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "inventory.jar"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "inventory.jar"]

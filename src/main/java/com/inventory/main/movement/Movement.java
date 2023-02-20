@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Set;
+import java.util.SortedSet;
 
 @Entity
 @Table(name = "movements")
@@ -50,9 +51,9 @@ public class Movement {
   @Column(name = "created_at")
   private final Timestamp createdAt = new Timestamp(new Date().getTime());
 
-  @OneToMany(mappedBy = "movement")
+  @OneToMany(fetch = FetchType.EAGER, mappedBy = "movement")
   @OrderBy("created_at ASC")
-  private Set<Coordination> coordinations;
+  private SortedSet<Coordination> coordinations;
 
   @ManyToOne
   @JoinColumn(name = "requested_user_id", insertable = false, updatable = false)
@@ -109,6 +110,15 @@ public class Movement {
         return "Отменено";
       }
     }
+  }
+
+  public Movement(Type type, int itemId, int quantity, int locationToId, int requestedUserId, Status status) {
+    this.type = type;
+    this.itemId = itemId;
+    this.quantity = quantity;
+    this.locationToId = locationToId;
+    this.requestedUserId = requestedUserId;
+    this.status = status;
   }
 
 }

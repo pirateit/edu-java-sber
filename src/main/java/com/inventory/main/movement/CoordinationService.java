@@ -44,10 +44,6 @@ class CoordinationService {
     coordination.setChiefUserId(chiefUserId);
     coordination.setStatus(status);
 
-    if (!comment.isBlank()) {
-      coordination.setComment(comment);
-    }
-
     return coordinationRepository.save(coordination);
   }
 

@@ -18,11 +18,11 @@ public class Coordination {
 
   @Id
   @Column(name = "movement_id", nullable = false)
-  private Integer movementId;
+  private int movementId;
 
   @Id
   @Column(name = "chief_user_id", nullable = false)
-  private Integer chiefUserId;
+  private int chiefUserId;
 
   @Id
   @Column(name = "created_at")
@@ -68,7 +68,13 @@ public class Coordination {
         return "Отказано";
       }
     }
+  }
 
+  public Coordination(int movementId, int chiefUserId, Status status, String comment) {
+    this.movementId = movementId;
+    this.chiefUserId = chiefUserId;
+    this.status = status;
+    this.comment = comment;
   }
 
 }
