@@ -1,6 +1,6 @@
 package com.inventory.main.movement;
 
-import com.inventory.main.user.User;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -31,16 +31,16 @@ public class MovementControllerTest {
   }
 
   @Test
-  @WithMockUser
-  void getSettingsByUser() throws Exception {
+  @WithUserDetails("afanasiy18011985@mail.ru")
+  void getMovementsPageByUser() throws Exception {
     this.mvc.perform(get("/movements"))
       .andExpect(status().isOk())
       .andExpect(view().name("movements/index"));
   }
 
   @Test
-  @WithMockUser
-  void getSettingsWithParameters() throws Exception {
+  @WithUserDetails("afanasiy18011985@mail.ru")
+  void getMovementsPageWithParameters() throws Exception {
     this.mvc.perform(get("/movements")
         .queryParam("page", "2")
         .queryParam("type", Movement.Type.MOVEMENT.name())
@@ -51,22 +51,35 @@ public class MovementControllerTest {
   }
 
   @Test
-  @WithMockUser
   void getWaitingMovementsPage() throws Exception {
+    this.mvc.perform(get("/movements"))
+      .andExpect(status().is3xxRedirection());
+  }
+
+  @Test
+  @WithUserDetails("afanasiy18011985@mail.ru")
+  void getWaitingMovementsPageByUser() throws Exception {
     this.mvc.perform(get("/movements"))
       .andExpect(status().isOk())
       .andExpect(view().name("movements/index"));
   }
 
   @Test
-  @WithMockUser
+  @WithUserDetails("veronika03081978@rambler.ru")
   void getMovementPage() throws Exception {
     this.mvc.perform(get("/movements/{id}", 1))
       .andExpect(status().isForbidden());
   }
 
   @Test
-  @WithUserDetails("admin@example.com")
+  @WithUserDetails("viktoriya5412@mail.ru")
+  void getMovementPageByGuest() throws Exception {
+    this.mvc.perform(get("/movements/{id}", 1))
+      .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @WithUserDetails("daniil6777@mail.ru")
   void getMovementPageByOwner() throws Exception {
     this.mvc.perform(get("/movements/{id}", 1))
       .andExpect(status().isOk())
@@ -74,534 +87,77 @@ public class MovementControllerTest {
   }
 
   @Test
-  @WithUserDetails("vasiliy16011990@yandex.ru")
-  void createCoordination() throws Exception {
-    this.mvc.perform(get("/movements/{id}/coordinations", 1))
+  @WithUserDetails("admin@example.com")
+  void getMovementPageByAdmin() throws Exception {
+    this.mvc.perform(get("/movements/{id}", 1))
       .andExpect(status().isOk())
       .andExpect(view().name("movements/movement"));
   }
 
-//
-//
-//  @Test
-//  void getUsers() throws Exception {
-//    this.mvc.perform(get("/settings/users"))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  @WithMockUser
-//  void getUsersByUser() throws Exception {
-//    this.mvc.perform(get("/settings/users"))
-//      .andExpect(status().isForbidden());
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void getUsersByAdmin() throws Exception {
-//    this.mvc.perform(get("/settings/users"))
-//      .andExpect(status().isOk())
-//      .andExpect(view().name("settings/users/index"));
-//  }
-//
-//  @Test
-//  void getDeletedUsers() throws Exception {
-//    this.mvc.perform(get("/settings/users/deleted"))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  @WithMockUser
-//  void getDeletedUsersByUser() throws Exception {
-//    this.mvc.perform(get("/settings/users/deleted"))
-//      .andExpect(status().isForbidden());
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void getDeletedUsersByAdmin() throws Exception {
-//    this.mvc.perform(get("/settings/users/deleted"))
-//      .andExpect(status().isOk())
-//      .andExpect(view().name("settings/users/deleted"));
-//  }
-//
-//  @Test
-//  void getUserCreate() throws Exception {
-//    this.mvc.perform(get("/settings/users/create"))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  @WithMockUser
-//  void getUserCreateByUser() throws Exception {
-//    this.mvc.perform(get("/settings/users/create"))
-//      .andExpect(status().isForbidden());
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void getUserCreateByAdmin() throws Exception {
-//    this.mvc.perform(get("/settings/users/create"))
-//      .andExpect(status().isOk())
-//      .andExpect(view().name("settings/users/create"));
-//  }
-//
-//  @Test
-//  void createUser() throws Exception {
-//    this.mvc.perform(post("/settings/users"))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  @WithMockUser
-//  void createUserByUser() throws Exception {
-//    this.mvc.perform(post("/settings/users"))
-//      .andExpect(status().isForbidden());
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void createUserWithoutDataByAdmin() throws Exception {
-//    this.mvc.perform(post("/settings/users"))
-//      .andExpect(status().isOk())
-//      .andExpect(view().name("settings/users/create"));
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void createUserWithDataByAdmin() throws Exception {
-//    this.mvc.perform(post("/settings/users")
-//        .param("lastName", "Lastname")
-//        .param("firstName", "Firstname")
-//        .param("email", "test@mail.ru")
-//        .param("phone", "79157775577")
-//        .param("password", "123")
-//        .param("locationId", "2")
-//        .param("isActive", "true"))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  void updateUser() throws Exception {
-//    this.mvc.perform(post("/settings/users/{id}", 1))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  @WithMockUser
-//  void updateUserByUser() throws Exception {
-//    this.mvc.perform(post("/settings/users/{id}", 1))
-//      .andExpect(status().isForbidden());
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void updateUserWithoutRequiredFieldByAdmin() throws Exception {
-//    this.mvc.perform(post("/settings/users/{id}", 1)
-//        .param("lastName", "NewLastname")
-//        .param("firstName", "NewFirstname")
-//        .param("phone", "79156666666")
-//        .param("password", "123")
-//        .param("locationId", "1")
-//        .param("isActive", "false")
-//        .param("role", User.Role.ADMIN.name()))
-//      .andExpect(status().isOk())
-//      .andExpect(view().name("settings/users/update"));
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void updateUserByAdmin() throws Exception {
-//    this.mvc.perform(post("/settings/users/{id}", 1)
-//        .param("lastName", "NewLastname")
-//        .param("firstName", "NewFirstname")
-//        .param("email", "test@mail.ru")
-//        .param("phone", "79156666666")
-//        .param("password", "123")
-//        .param("locationId", "1")
-//        .param("isActive", "false")
-//        .param("role", User.Role.ADMIN.name()))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  void getUser() throws Exception {
-//    this.mvc.perform(get("/settings/users/{id}", 1))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  @WithMockUser
-//  void getUserByUser() throws Exception {
-//    this.mvc.perform(get("/settings/users/{id}", 1))
-//      .andExpect(status().isForbidden());
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void getUserByAdmin() throws Exception {
-//    this.mvc.perform(get("/settings/users/{id}", 1))
-//      .andDo(print())
-//      .andExpect(status().isOk())
-//      .andExpect(view().name("settings/users/update"));
-//  }
-//
-//  @Test
-//  void deleteUser() throws Exception {
-//    this.mvc.perform(get("/settings/users/{id}/delete", 1))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  @WithMockUser
-//  void deleteUserByUser() throws Exception {
-//    this.mvc.perform(get("/settings/users/{id}/delete", 1))
-//      .andExpect(status().isForbidden());
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void deleteUserByAdmin() throws Exception {
-//    this.mvc.perform(get("/settings/users/{id}/delete", 1))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  void restoreUser() throws Exception {
-//    this.mvc.perform(get("/settings/users/{id}/restore", 1))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  @WithMockUser
-//  void restoreUserByUser() throws Exception {
-//    this.mvc.perform(get("/settings/users/{id}/restore", 1))
-//      .andExpect(status().isForbidden());
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void restoreUserByAdmin() throws Exception {
-//    this.mvc.perform(get("/settings/users/{id}/restore", 1))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  void getLocations() throws Exception {
-//    this.mvc.perform(get("/settings/locations"))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  @WithMockUser
-//  void getLocationsByUser() throws Exception {
-//    this.mvc.perform(get("/settings/locations"))
-//      .andExpect(status().isForbidden());
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void getLocationsByAdmin() throws Exception {
-//    this.mvc.perform(get("/settings/locations"))
-//      .andExpect(status().isOk())
-//      .andExpect(view().name("settings/locations/index"));
-//  }
-//
-//  @Test
-//  void getLocationCreate() throws Exception {
-//    this.mvc.perform(get("/settings/locations/create"))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  @WithMockUser
-//  void getLocationCreateByUser() throws Exception {
-//    this.mvc.perform(get("/settings/locations/create"))
-//      .andExpect(status().isForbidden());
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void getLocationCreateByAdmin() throws Exception {
-//    this.mvc.perform(get("/settings/locations/create"))
-//      .andExpect(status().isOk())
-//      .andExpect(view().name("settings/locations/create"));
-//  }
-//
-//  @Test
-//  void createLocation() throws Exception {
-//    this.mvc.perform(post("/settings/locations/create"))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  @WithMockUser
-//  void createLocationByUser() throws Exception {
-//    this.mvc.perform(post("/settings/locations/create"))
-//      .andExpect(status().isForbidden());
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void createLocationWithoutDataByAdmin() throws Exception {
-//    this.mvc.perform(post("/settings/locations/create"))
-//      .andExpect(status().isOk())
-//      .andExpect(view().name("settings/locations/create"));
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void createLocationWithDataByAdmin() throws Exception {
-//    this.mvc.perform(post("/settings/locations/create")
-//        .param("title", "Test Location"))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  void getUpdateLocationPage() throws Exception {
-//    this.mvc.perform(get("/settings/locations/{id}", 1))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  @WithMockUser
-//  void getUpdateLocationPageByUser() throws Exception {
-//    this.mvc.perform(get("/settings/locations/{id}", 1))
-//      .andExpect(status().isForbidden());
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void getUpdateLocationPageByAdmin() throws Exception {
-//    this.mvc.perform(get("/settings/locations/{id}", 1))
-//      .andExpect(status().isOk())
-//      .andExpect(view().name("settings/locations/update"));
-//  }
-//
-//  @Test
-//  void updateLocation() throws Exception {
-//    this.mvc.perform(post("/settings/locations/{id}", 1))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  @WithMockUser
-//  void updateLocationByUser() throws Exception {
-//    this.mvc.perform(post("/settings/locations/{id}", 1))
-//      .andExpect(status().isForbidden());
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void updateLocationWithoutDataByAdmin() throws Exception {
-//    this.mvc.perform(post("/settings/locations/{id}", 1))
-//      .andExpect(status().isOk())
-//      .andExpect(view().name("settings/locations/update"));
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void updateLocationWithDataByAdmin() throws Exception {
-//    this.mvc.perform(post("/settings/locations/{id}", 1)
-//        .param("title", "New Test Location"))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  void deleteLocation() throws Exception {
-//    this.mvc.perform(get("/settings/locations/{id}/delete", 1))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  @WithMockUser
-//  void deleteLocationByUser() throws Exception {
-//    this.mvc.perform(get("/settings/locations/{id}/delete", 1))
-//      .andExpect(status().isForbidden());
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void deleteLocationWithNestedByAdmin() throws Exception {
-//    this.mvc.perform(get("/settings/locations/{id}/delete", 1))
-//      .andExpect(status().isOk())
-//      .andExpect(view().name("settings/locations/update"));
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void deleteLocationWithoutNestedByAdmin() throws Exception {
-//    this.mvc.perform(get("/settings/locations/{id}/delete", 15))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  void restoreLocation() throws Exception {
-//    this.mvc.perform(get("/settings/locations/{id}/restore", 1))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  @WithMockUser
-//  void restoreLocationByUser() throws Exception {
-//    this.mvc.perform(get("/settings/locations/{id}/restore", 1))
-//      .andExpect(status().isForbidden());
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void restoreLocationByAdmin() throws Exception {
-//    this.mvc.perform(get("/settings/locations/{id}/restore", 1))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  void getCategoriesPage() throws Exception {
-//    this.mvc.perform(get("/settings/categories"))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  @WithMockUser
-//  void getCategoriesPageByUser() throws Exception {
-//    this.mvc.perform(get("/settings/categories"))
-//      .andExpect(status().isForbidden());
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void getCategoriesPageByAdmin() throws Exception {
-//    this.mvc.perform(get("/settings/categories"))
-//      .andExpect(status().isOk())
-//      .andExpect(view().name("settings/categories/index"));
-//  }
-//
-//  @Test
-//  void getCreateCategoryPagePage() throws Exception {
-//    this.mvc.perform(get("/settings/categories/create"))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  @WithMockUser
-//  void getCreateCategoryPageByUser() throws Exception {
-//    this.mvc.perform(get("/settings/categories/create"))
-//      .andExpect(status().isForbidden());
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void getCreateCategoryPageByAdmin() throws Exception {
-//    this.mvc.perform(get("/settings/categories/create"))
-//      .andExpect(status().isOk())
-//      .andExpect(view().name("settings/categories/create"));
-//  }
-//
-//  @Test
-//  void createCategory() throws Exception {
-//    this.mvc.perform(post("/settings/categories/create"))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  @WithMockUser
-//  void createCategoryByUser() throws Exception {
-//    this.mvc.perform(post("/settings/categories/create"))
-//      .andExpect(status().isForbidden());
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void createCategoryWithoutDataByAdmin() throws Exception {
-//    this.mvc.perform(post("/settings/categories/create"))
-//      .andExpect(status().isOk())
-//      .andExpect(view().name("settings/categories/create"));
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void createCategoryWithDataByAdmin() throws Exception {
-//    this.mvc.perform(post("/settings/categories/create")
-//        .param("title", "Test Category"))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  void getUpdateCategoryPage() throws Exception {
-//    this.mvc.perform(get("/settings/categories/{id}", 1))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  @WithMockUser
-//  void getUpdateCategoryPageByUser() throws Exception {
-//    this.mvc.perform(get("/settings/categories/{id}", 1))
-//      .andExpect(status().isForbidden());
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void getUpdateCategoryPageByAdmin() throws Exception {
-//    this.mvc.perform(get("/settings/categories/{id}", 1))
-//      .andExpect(status().isOk())
-//      .andExpect(view().name("settings/categories/update"));
-//  }
-//
-//  @Test
-//  void updateCategory() throws Exception {
-//    this.mvc.perform(post("/settings/categories/{id}", 1))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  @WithMockUser
-//  void updateCategoryByUser() throws Exception {
-//    this.mvc.perform(post("/settings/categories/{id}", 1))
-//      .andExpect(status().isForbidden());
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void updateCategoryWithoutDataByAdmin() throws Exception {
-//    this.mvc.perform(post("/settings/categories/{id}", 1))
-//      .andExpect(status().isOk())
-//      .andExpect(view().name("settings/categories/update"));
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void updateCategoryWithDataByAdmin() throws Exception {
-//    this.mvc.perform(post("/settings/categories/{id}", 1)
-//        .param("title", "New Test Category"))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  void deleteCategory() throws Exception {
-//    this.mvc.perform(get("/settings/categories/{id}/delete", 1))
-//      .andExpect(status().is3xxRedirection());
-//  }
-//
-//  @Test
-//  @WithMockUser
-//  void deleteCategoryByUser() throws Exception {
-//    this.mvc.perform(get("/settings/categories/{id}/delete", 1))
-//      .andExpect(status().isForbidden());
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void deleteCategoryWithNestedByAdmin() throws Exception {
-//    this.mvc.perform(get("/settings/categories/{id}/delete", 1))
-//      .andExpect(status().isOk())
-//      .andExpect(view().name("settings/categories/update"));
-//  }
-//
-//  @Test
-//  @WithUserDetails("admin@example.com")
-//  void deleteCategoryWithoutNestedByAdmin() throws Exception {
-//    this.mvc.perform(get("/settings/categories/{id}/delete", 5))
-//      .andExpect(status().is3xxRedirection());
-//  }
+  @Test
+  @DisplayName("Согласование без данных")
+  @WithUserDetails("afanasiy18011985@mail.ru")
+  void createCoordination() throws Exception {
+    this.mvc.perform(post("/movements/{id}/coordinations", 26))
+      .andExpect(status().is3xxRedirection())
+      .andExpect(redirectedUrl("/movements/26"));
+  }
+
+  @Test
+  @DisplayName("Согласование от согласовывающего")
+  @WithUserDetails("elizaveta2042@ya.ru")
+  void createCoordinationByOwner() throws Exception {
+    this.mvc.perform(post("/movements/{id}/coordinations", 27)
+        .param("status", Coordination.Status.COORDINATED.name()))
+      .andExpect(status().is3xxRedirection())
+      .andExpect(redirectedUrl("/movements/27"));
+  }
+
+  @Test
+  @DisplayName("Согласование от постороннего")
+  @WithUserDetails("katerina1969@ya.ru")
+  void createCoordinationByOther() throws Exception {
+    this.mvc.perform(post("/movements/{id}/coordinations", 27)
+        .param("status", Coordination.Status.COORDINATED.name()))
+      .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @DisplayName("Отправка от собственника")
+  @WithUserDetails("nikita91@ya.ru")
+  void createSendCoordinationByOwner() throws Exception {
+    this.mvc.perform(post("/movements/{id}/coordinations", 28)
+        .param("status", Coordination.Status.SENT.name()))
+      .andExpect(status().is3xxRedirection())
+      .andExpect(redirectedUrl("/movements/28"));
+  }
+
+  @Test
+  @DisplayName("Отправка от постороннего")
+  @WithUserDetails("katerina1969@ya.ru")
+  void createSendCoordinationByOther() throws Exception {
+    this.mvc.perform(post("/movements/{id}/coordinations", 28)
+        .param("status", Coordination.Status.SENT.name()))
+      .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @DisplayName("Приём от постороннего")
+  @WithUserDetails("katerina1969@ya.ru")
+  void createAcceptCoordinationByOther() throws Exception {
+    this.mvc.perform(post("/movements/{id}/coordinations", 26)
+        .param("status", Coordination.Status.ACCEPTED.name()))
+      .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @DisplayName("Приём от собственника")
+  @WithUserDetails("admin@example.com")
+  void createAcceptCoordinationByOwner() throws Exception {
+    this.mvc.perform(post("/movements/{id}/coordinations", 26)
+        .param("status", Coordination.Status.ACCEPTED.name()))
+      .andExpect(status().is3xxRedirection())
+      .andExpect(redirectedUrl("/movements/26"));
+  }
 
 }

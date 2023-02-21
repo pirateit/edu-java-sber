@@ -41,7 +41,7 @@ public class ItemController extends MainController {
   }
 
   @GetMapping
-  public String getActiveItems(
+  public String getActiveItemsPage(
     @RequestParam(name = "page", required = false) Integer page,
     @RequestParam(name = "size", required = false) Integer size,
     @RequestParam(name = "title", required = false) String title,
@@ -78,7 +78,7 @@ public class ItemController extends MainController {
   }
 
   @GetMapping("/deleted")
-  public String getInactiveItems(
+  public String getInactiveItemsPage(
     @RequestParam(name = "page", required = false) Integer page,
     @RequestParam(name = "size", required = false) Integer size,
     @RequestParam(name = "title", required = false) String title,
@@ -100,7 +100,7 @@ public class ItemController extends MainController {
   }
 
   @GetMapping("/create")
-  public String getItemCreate(Model model) {
+  public String getCreateItemPage(Model model) {
     model.addAttribute("item", new Item());
     model.addAttribute("categories", categoryService.getAll());
     model.addAttribute("locations", locationService.getAllActive());
@@ -131,7 +131,7 @@ public class ItemController extends MainController {
   }
 
   @GetMapping("/{id}")
-  public String getItemUpdate(
+  public String getUpdateItemPage(
     @PathVariable("id") Integer id,
     Model model,
     @AuthenticationPrincipal User user,
@@ -206,7 +206,7 @@ public class ItemController extends MainController {
   }
 
   @GetMapping("/{id}/move")
-  public String getItemMove(
+  public String getMoveItemPage(
     @PathVariable("id") Integer id,
     Model model,
     @AuthenticationPrincipal User user,

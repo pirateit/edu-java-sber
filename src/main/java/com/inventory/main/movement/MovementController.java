@@ -152,7 +152,7 @@ public class MovementController extends MainController {
 
     switch (coordination.getStatus()) {
       case REFUSED, COORDINATED -> {
-        if (lastCoordination.getChiefUserId() != (user.getId())) {
+        if (!lastCoordination.getChiefUserId().equals(user.getId())) {
           throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
       }
@@ -163,10 +163,12 @@ public class MovementController extends MainController {
         }
       }
       case ACCEPTED -> {
-        if (!movement.get().getLocationTo().getResponsibleUserId().equals(user.getId())) {
+        Set<Location> userLocations = locationService.getUserLocations(user.getId());
+        if (!userLocations.contains(movement.get().getLocationTo())) {
           throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
       }
+      default -> { return "redirect:/movements/" + id; }
     }
 
     movementService.coordinate(movement.get(), coordination, user);

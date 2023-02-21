@@ -2,13 +2,12 @@ package com.inventory.main.movement;
 
 import lombok.Getter;
 
-import javax.persistence.Transient;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 
 @Getter
-public class CoordinationKey implements Serializable {
+public class CoordinationKey implements Serializable, Comparable<CoordinationKey> {
 
   private Integer movementId;
 
@@ -16,6 +15,7 @@ public class CoordinationKey implements Serializable {
 
   private final Timestamp createdAt = new Timestamp(new Date().getTime());
 
+  @Override
   public boolean equals(Object o) {
     if (o == this) return true;
     if (!(o instanceof CoordinationKey)) return false;
@@ -28,6 +28,7 @@ public class CoordinationKey implements Serializable {
     return movementIdEquals && chiefUserIdEquals && createdAtEquals;
   }
 
+  @Override
   public final int hashCode() {
     int result = 17;
     if (movementId != null) {
@@ -40,6 +41,17 @@ public class CoordinationKey implements Serializable {
       result = 45 * result + createdAt.hashCode();
     }
     return result;
+  }
+
+  @Override public int compareTo(CoordinationKey o)
+  {
+    if (this.createdAt.after(o.createdAt)) {
+      return 1;
+    } else if (this.createdAt.before(o.createdAt)) {
+      return -1;
+    } else {
+      return 0;
+    }
   }
 
 }

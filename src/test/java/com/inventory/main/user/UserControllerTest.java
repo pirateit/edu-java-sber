@@ -6,6 +6,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithSecurityContext;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
@@ -15,6 +17,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
+@Sql({"/import.sql"})
 public class UserControllerTest {
 
   @Autowired
@@ -27,7 +31,7 @@ public class UserControllerTest {
   }
 
   @Test
-  @WithUserDetails("test@mail.ru")
+  @WithUserDetails("afanasiy18011985@mail.ru")
   void getProfilePageWithUserDetails() throws Exception {
     this.mvc.perform(get("/profile"))
       .andExpect(status().isOk())
@@ -35,7 +39,7 @@ public class UserControllerTest {
   }
 
   @Test
-  @WithUserDetails("test@mail.ru")
+  @WithUserDetails("afanasiy18011985@mail.ru")
   void updateUserProfileWithUserDetails() throws Exception {
     this.mvc.perform(post("/profile")
         .param("lastName", "Lastname")

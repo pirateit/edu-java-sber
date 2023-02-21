@@ -45,20 +45,20 @@ public interface MovementRepository extends CrudRepository<Movement, Integer> {
   );
 
   @Query(value = "SELECT * FROM movements " +
-    "LEFT OUTER JOIN (SELECT * FROM coordinations ORDER BY created_at DESC LIMIT 1) cds ON cds.movement_id = movements.id " +
+    "LEFT OUTER JOIN (SELECT * FROM coordinations ORDER BY created_at) cds ON cds.movement_id = movements.id " +
     "LEFT OUTER JOIN locations ON locations.id = movements.location_to_id " +
-    "WHERE (movements.requested_user_id = :userId AND cds.status = 'COORDINATED') " +
-    "OR cds.chief_user_id = :userId " +
-    "OR (locations.responsible_user_id = :userId AND cds.status = 'SENT')" +
+    "WHERE ((movements.requested_user_id = :userId AND cds.status = 'COORDINATED') " +
+    "OR (cds.chief_user_id = :userId AND cds.status = 'WAITING') " +
+    "OR (locations.responsible_user_id = :userId AND cds.status = 'SENT')) " +
     "AND movements.status IN ('UNDER_APPROVAL', 'APPROVED', 'SENT') " +
     "ORDER BY movements.id DESC",
-    countQuery = "SELECT COUNT(*) FROM movements " +
-      "LEFT OUTER JOIN (SELECT * FROM coordinations ORDER BY created_at DESC LIMIT 1) cds " +
+    countQuery = "SELECT * FROM movements " +
+      "LEFT OUTER JOIN (SELECT * FROM coordinations ORDER BY created_at) cds ON cds.movement_id = movements.id " +
       "LEFT OUTER JOIN locations ON locations.id = movements.location_to_id " +
-      "WHERE (movements.requested_user_id = :userId AND cds.status = 'COORDINATED') " +
-      "OR cds.chief_user_id = :userId " +
-      "OR (locations.responsible_user_id = :userId AND cds.status = 'SENT')" +
-      "AND movements.status IN ('UNDER_APPROVAL', 'APPROVED', 'SENT') ", nativeQuery = true)
+      "WHERE ((movements.requested_user_id = :userId AND cds.status = 'COORDINATED') " +
+      "OR (cds.chief_user_id = :userId AND cds.status = 'WAITING') " +
+      "OR (locations.responsible_user_id = :userId AND cds.status = 'SENT')) " +
+      "AND movements.status IN ('UNDER_APPROVAL', 'APPROVED', 'SENT')", nativeQuery = true)
   Page<Movement> findAllUserWaiting(@Param("userId") Integer userId, Pageable pageable);
 
   Optional<Movement> findOneByItemIdAndStatusIn(int itemId, List<Movement.Status> statusList);

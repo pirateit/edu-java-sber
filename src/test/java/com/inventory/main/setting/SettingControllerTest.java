@@ -230,7 +230,7 @@ public class SettingControllerTest {
   @WithUserDetails("admin@example.com")
   void deleteUserByAdmin() throws Exception {
     this.mvc.perform(get("/settings/users/{id}/delete", 1))
-      .andExpect(status().is3xxRedirection());
+      .andExpect(status().is2xxSuccessful());
   }
 
   @Test

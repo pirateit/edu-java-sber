@@ -14,15 +14,15 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Coordination {
+public class Coordination implements Comparable<Coordination> {
 
   @Id
   @Column(name = "movement_id", nullable = false)
-  private int movementId;
+  private Integer movementId;
 
   @Id
   @Column(name = "chief_user_id", nullable = false)
-  private int chiefUserId;
+  private Integer chiefUserId;
 
   @Id
   @Column(name = "created_at")
@@ -75,6 +75,43 @@ public class Coordination {
     this.chiefUserId = chiefUserId;
     this.status = status;
     this.comment = comment;
+  }
+
+  public boolean equals(Object o) {
+    if (o == this) return true;
+    if (!(o instanceof Coordination)) return false;
+    Coordination other = (Coordination) o;
+    boolean movementIdEquals = (this.movementId == null && other.movementId == null)
+            || (this.movementId != null && this.movementId.equals(other.movementId));
+    boolean chiefUserIdEquals = (this.chiefUserId == null && other.chiefUserId == null)
+            || (this.chiefUserId != null && this.chiefUserId.equals(other.chiefUserId));
+    boolean createdAtEquals = this.createdAt.equals(other.createdAt);
+    return movementIdEquals && chiefUserIdEquals && createdAtEquals;
+  }
+
+  public final int hashCode() {
+    int result = 17;
+    if (movementId != null) {
+      result = 31 * result + movementId.hashCode();
+    }
+    if (chiefUserId != null) {
+      result = 31 * result + chiefUserId.hashCode();
+    }
+    if (chiefUserId != null) {
+      result = 45 * result + createdAt.hashCode();
+    }
+    return result;
+  }
+
+  @Override
+  public int compareTo(Coordination o) {
+    if (this.createdAt.after(o.createdAt)) {
+      return 1;
+    } else if (this.createdAt.before(o.createdAt)) {
+      return -1;
+    } else {
+      return 0;
+    }
   }
 
 }
