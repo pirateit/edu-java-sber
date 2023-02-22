@@ -70,6 +70,11 @@ public class Coordination implements Comparable<Coordination> {
     }
   }
 
+  public Coordination(Status status, String comment) {
+    this.status = status;
+    this.comment = comment;
+  }
+
   public Coordination(int movementId, int chiefUserId, Status status, String comment) {
     this.movementId = movementId;
     this.chiefUserId = chiefUserId;

@@ -176,6 +176,8 @@ WHERE id = 11;
 UPDATE locations
 SET responsible_user_id = 10
 WHERE id = 12;
+SET responsible_user_id = 11
+WHERE id = 15;
 
 INSERT INTO categories (title, prefix, parent_id, depth)
 VALUES ('Компьютеры/Ноутбуки', DEFAULT, DEFAULT, 1),
@@ -246,10 +248,11 @@ VALUES ('MOVEMENT', 1, 1, null, 6, 11, 'SUCCESS'),
        ('MOVEMENT', 22, 1, null, 14, 11, 'SUCCESS'),
        ('MOVEMENT', 23, 1, null, 14, 11, 'SUCCESS'),
        ('MOVEMENT', 24, 1, null, 13, 11, 'SUCCESS'),
-       ('MOVEMENT', 25, 1, null, 14, 11, 'UNDER_APPROVAL'),
+       ('MOVEMENT', 25, 1, null, 14, 11, 'SUCCESS'),
        ('MOVEMENT', 13, 1, 6, 15, 2, 'SENT'),
        ('WRITE_OFF', 23, 1, 14, null, 10, 'UNDER_APPROVAL'),
-       ('MOVEMENT', 10, 1, 5, 15, 4, 'APPROVED');
+       ('MOVEMENT', 10, 1, 5, 15, 4, 'APPROVED'),
+       ('MOVEMENT', 12, 1, 6, 15, 4, 'UNDER_APPROVAL');
 
 INSERT INTO coordinations (movement_id, chief_user_id, status, comment, created_at)
 VALUES (26, 1, 'COORDINATED', null, '2023-02-12 01:22:26.377+03'),
@@ -257,6 +260,7 @@ VALUES (26, 1, 'COORDINATED', null, '2023-02-12 01:22:26.377+03'),
 (28, 1, 'COORDINATED', null, '2023-02-18 01:04:28.082+03'),
 (28, 2, 'COORDINATED', null, '2023-02-18 01:04:16.717+03'),
 (28, 3, 'COORDINATED', null, '2023-02-18 01:01:34.942+03'),
-(26, 2, 'SENT', null, '2023-02-21 15:06:22.3+03');
+(26, 2, 'SENT', null, '2023-02-21 15:06:22.3+03'),
+(29, 3, 'WAITING', null, '2023-02-21 15:06:22.3+03');
 
 COMMIT;

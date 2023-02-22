@@ -121,4 +121,14 @@ public class Movement {
     this.status = status;
   }
 
+  public Movement(Type type, int itemId, int quantity, int locationToId, int requestedUserId, Status status, String comment) {
+    this.type = type;
+    this.itemId = itemId;
+    this.quantity = quantity;
+    this.locationToId = locationToId;
+    this.requestedUserId = requestedUserId;
+    this.status = status;
+    this.comment = comment;
+  }
+
 }

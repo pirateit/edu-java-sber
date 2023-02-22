@@ -191,6 +191,8 @@ public class MovementService {
           itemRepository.deleteById(item.getId());
         } else {
           item.setLocationId(user.getLocationId());
+
+          itemRepository.save(item);
         }
 
         movement.setStatus(Movement.Status.SUCCESS);
