@@ -12,18 +12,13 @@ import java.util.Set;
 @Repository
 public interface LocationRepository extends CrudRepository<Location, Integer> {
 
-  @Override
-  Set<Location> findAll();
+  Set<Location> findAllByDeletedAtIsNull();
 
-  Optional<Location> findByTitle(String title);
+  Set<Location> findAllByDeletedAtIsNotNull();
 
-  Set<Location> findAllByOrderByIdAsc();
-
-  Set<Location> findAllByParentIdIsNullOrderByIdAsc();
+  Set<Location> findAllByParentIdIsNullAndDeletedAtIsNullOrderByIdAsc();
 
   Set<Location> findByResponsibleUserId(int id);
-
-  Set<Location> findByParentIdOrderByTitleAsc(int id);
 
   @Query(value = "WITH RECURSIVE rectree AS (" +
     "SELECT * " +
@@ -60,6 +55,10 @@ public interface LocationRepository extends CrudRepository<Location, Integer> {
     "ON t.parent_id = rectree.id" +
     ") SELECT * FROM rectree WHERE deleted_at IS NULL;", nativeQuery = true)
   Set<Location> findChildrenByResponsibleUserId(@Param("id") Integer id);
+
+  @Modifying
+  @Query(value = "UPDATE locations SET deleted_at = NOW() WHERE id = :id ;", nativeQuery = true)
+  void deleteById(@Param("id") int id);
 
   @Modifying
   @Query(value = "UPDATE locations SET deleted_at = NULL WHERE id = :id ;", nativeQuery = true)

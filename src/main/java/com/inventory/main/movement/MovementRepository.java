@@ -63,6 +63,8 @@ public interface MovementRepository extends CrudRepository<Movement, Integer> {
 
   Optional<Movement> findOneByItemIdAndStatusIn(int itemId, List<Movement.Status> statusList);
 
+  Set<Movement> findAllByItemId(int ItemId);
+
   @Query(value = "SELECT COUNT(DISTINCT movements.id) FROM movements " +
     "LEFT OUTER JOIN (SELECT * FROM coordinations ORDER BY created_at) cds ON cds.movement_id = movements.id " +
     "LEFT OUTER JOIN locations ON locations.id = movements.location_to_id " +

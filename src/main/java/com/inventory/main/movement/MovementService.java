@@ -59,6 +59,10 @@ public class MovementService {
     return movementRepository.findById(movementId);
   }
 
+  public Set<Movement> getByItemId(int itemId) {
+    return movementRepository.findAllByItemId(itemId);
+  }
+
   public Optional<Movement> getActiveByItemId(int itemId) {
     return movementRepository.findOneByItemIdAndStatusIn(itemId, Arrays.asList(Movement.Status.APPROVED, Movement.Status.UNDER_APPROVAL, Movement.Status.SENT));
   }
@@ -112,13 +116,13 @@ public class MovementService {
 
     if (movement.getType() == Movement.Type.WRITE_OFF) {
       movement.setLocationToId(null);
+    } else {
+      item.setLocationId(movement.getLocationToId());
     }
 
-    movement = movementRepository.save(movement);
-
-    item.setLocationId(movement.getLocationToId());
-
     itemRepository.save(item);
+
+    movement = movementRepository.save(movement);
 
     return movement;
   }

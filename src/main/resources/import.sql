@@ -114,22 +114,26 @@ ALTER TABLE coordinations
 COMMIT;
 BEGIN;
 
-INSERT INTO locations (title, parent_id, depth)
-VALUES ('Моя компания', DEFAULT, DEFAULT),
-       ('Москва', 1, 1),
-       ('Краснодар', 1, 1),
-       ('Волгоград', 1, 1),
-       ('Офис на ул. Ленина', 2, 2),
-       ('Склад на пр. Мира', 2, 2),
-       ('Магазин на Сапрунова', 3, 2),
-       ('Магазин на Исторической', 4, 2),
-       ('Ростов-на-Дону', 1, 1),
-       ('Санкт-Петербург', 1, 1),
-       ('Криворожская ул., 64', 9, 2),
-       ('Роменская ул., 2', 10, 2),
-       ('Склад', 12, 3),
-       ('Магазин', 12, 3),
-       ('IT-отдел', 1, 1);
+INSERT INTO locations (title, parent_id, depth, deleted_at)
+VALUES ('Моя компания', DEFAULT, DEFAULT, null),
+       ('Москва', 1, 1, null),
+       ('Краснодар', 1, 1, null),
+       ('Волгоград', 1, 1, null),
+       ('Офис на ул. Ленина', 2, 2, null),
+       ('Склад на пр. Мира', 2, 2, null),
+       ('Магазин на Сапрунова', 3, 2, null),
+       ('Магазин на Исторической', 4, 2, null),
+       ('Ростов-на-Дону', 1, 1, null),
+       ('Санкт-Петербург', 1, 1, null),
+       ('Криворожская ул., 64', 9, 2, null),
+       ('Роменская ул., 2', 10, 2, null),
+       ('Склад', 12, 3, null),
+       ('Магазин', 12, 3, null),
+       ('IT-отдел', 1, 1, null),
+       ('Склад', 15, 2, '2023-02-12 01:22:26.377+03'),
+       ('Сервисный центр', DEFAULT, DEFAULT, null),
+       ('Дополнительное подразделение', DEFAULT, DEFAULT, '2023-02-12 01:22:26.377+03');
+
 
 INSERT INTO users (last_name, first_name, email, phone, password, location_id, role)
 VALUES ('Летавина', 'Елизавета', 'elizaveta2042@ya.ru', '79818313615',
@@ -148,7 +152,7 @@ VALUES ('Летавина', 'Елизавета', 'elizaveta2042@ya.ru', '798183
         '$2a$10$kohWeR1WDlXMtjVbVcn6W.HPLrGm9UkyHccYSFExScfdMeW9rhB4a', 8, 'USER'),
        ('Щитта', 'Вероника', 'veronika03081978@rambler.ru', DEFAULT,
         '$2a$10$Rl9zDfM8MEMYhHyXLWidR.Py27ECuYBAeUWAdBvXTftnKvg1StJJC', 11, 'USER'),
-       ( 'Слепцов', 'Илья', 'ilya18011960@outlook.com', DEFAULT,
+       ('Слепцов', 'Илья', 'ilya18011960@outlook.com', DEFAULT,
         '$2a$10$YoWQjm.VVoBjgBTkokmtJuqvM5dqXoaCz34DFzLgq54Ak/16EYE2y', 13, 'USER'),
        ('Санькова', 'Клара', 'klara18101964@hotmail.com', DEFAULT,
         '$2a$10$mP/bHtZXeACN8sjQ9NhQFeK2LT2DZDNleg0G4MbECrzS3J7cAJxvi', 12, 'USER'),
@@ -176,6 +180,7 @@ WHERE id = 11;
 UPDATE locations
 SET responsible_user_id = 10
 WHERE id = 12;
+UPDATE locations
 SET responsible_user_id = 11
 WHERE id = 15;
 
@@ -196,32 +201,33 @@ VALUES ('Компьютеры/Ноутбуки', DEFAULT, DEFAULT, 1),
        ('Веб-камеры', 'ВЕБК', 10, 2),
        ('Краски', DEFAULT, 8, 4);
 
-INSERT INTO items (prefix, number, title, quantity, category_id, location_id)
-VALUES ('ПК', 000001, 'Системный блок DEXP', 1, 2, 6),
-       ('ПК', 000002, 'Системный блок Lenovo', 1, 2, 6),
-       ('НБ', 000001, 'Ноутбук Asus', 1, 3, 5),
-       ('НБ', 000002, 'Ноутбук Asus', 1, 3, 7),
-       ('НБ', 000003, 'Ноутбук Samsung', 1, 3, 8),
-       ('МОН', 000001, 'Монитор LG', 1, 11, 6),
-       ('МОН', 000002, 'Монитор LG', 1, 11, 6),
-       (DEFAULT, 000001, 'Мышь A4Tech', 1, 12, 6),
-       (DEFAULT, 000002, 'Мышь A4Tech', 1, 12, 6),
-       (DEFAULT, 000003, 'Мышь A4Tech', 1, 12, 5),
-       (DEFAULT, 000004, 'Мышь A4Tech', 1, 12, 7),
-       (DEFAULT, 000005, 'Мышь A4Tech', 1, 12, 8),
-       (DEFAULT, 000006, 'Клавиатура A4Tech', 1, 13, 6),
-       (DEFAULT, 000007, 'Клавиатура A4Tech', 1, 13, 6),
-       (DEFAULT, 000008, 'Краска чёрная Epson', 4, 15, 6),
-       ('ПК', 000003, 'Системный блок', 1, 2, 13),
-       ('ПК', 000004, 'Системный блок', 1, 2, 14),
-       ('НБ', 000004, 'Ноутбук Asus', 1, 3, 11),
-       ('М', 000001, 'Мышь', 1, 12, 13),
-       ('М', 000002, 'Мышь', 1, 12, 14),
-       ('КЛВ', 000006, 'Клавиатура', 1, 13, 13),
-       ('КЛВ', 000007, 'Клавиатура', 1, 13, 14),
-       ('КЛВ', 000008, 'Клавиатура', 1, 13, 14),
-       ('МОН', 000003, 'Монитор', 1, 11, 13),
-       ('МОН', 000004, 'Монитор', 1, 11, 14);
+INSERT INTO items (prefix, number, title, quantity, category_id, location_id, deleted_at)
+VALUES ('ПК', 000001, 'Системный блок DEXP', 1, 2, 6, null),
+       ('ПК', 000002, 'Системный блок Lenovo', 1, 2, 6, null),
+       ('НБ', 000001, 'Ноутбук Asus', 1, 3, 5, null),
+       ('НБ', 000002, 'Ноутбук Asus', 1, 3, 7, null),
+       ('НБ', 000003, 'Ноутбук Samsung', 1, 3, 8, null),
+       ('МОН', 000001, 'Монитор LG', 1, 11, 6, null),
+       ('МОН', 000002, 'Монитор LG', 1, 11, 6, null),
+       (DEFAULT, 000001, 'Мышь A4Tech', 1, 12, 6, null),
+       (DEFAULT, 000002, 'Мышь A4Tech', 1, 12, 6, null),
+       (DEFAULT, 000003, 'Мышь A4Tech', 1, 12, 5, null),
+       (DEFAULT, 000004, 'Мышь A4Tech', 1, 12, 7, null),
+       (DEFAULT, 000005, 'Мышь A4Tech', 1, 12, 8, null),
+       (DEFAULT, 000006, 'Клавиатура A4Tech', 1, 13, 6, null),
+       (DEFAULT, 000007, 'Клавиатура A4Tech', 1, 13, 6, null),
+       (DEFAULT, 000008, 'Краска чёрная Epson', 4, 15, 6, null),
+       ('ПК', 000003, 'Системный блок', 1, 2, 13, null),
+       ('ПК', 000004, 'Системный блок', 1, 2, 14, null),
+       ('НБ', 000004, 'Ноутбук Asus', 1, 3, 11, null),
+       ('М', 000001, 'Мышь', 1, 12, 13, null),
+       ('М', 000002, 'Мышь', 1, 12, 14, null),
+       ('КЛВ', 000006, 'Клавиатура', 1, 13, 13, null),
+       ('КЛВ', 000007, 'Клавиатура', 1, 13, 14, null),
+       ('КЛВ', 000008, 'Клавиатура', 1, 13, 14, null),
+       ('МОН', 000003, 'Монитор', 1, 11, 13, null),
+       ('МОН', 000005, 'Монитор', 1, 11, 13, '2023-02-12 01:22:26.377+03'),
+       ('МОН', 000004, 'Монитор', 1, 11, 14, null);
 
 INSERT INTO movements (type, item_id, quantity, location_from_id, location_to_id, requested_user_id, status)
 VALUES ('MOVEMENT', 1, 1, null, 6, 11, 'SUCCESS'),
@@ -252,15 +258,15 @@ VALUES ('MOVEMENT', 1, 1, null, 6, 11, 'SUCCESS'),
        ('MOVEMENT', 13, 1, 6, 15, 2, 'SENT'),
        ('WRITE_OFF', 23, 1, 14, null, 10, 'UNDER_APPROVAL'),
        ('MOVEMENT', 10, 1, 5, 15, 4, 'APPROVED'),
-       ('MOVEMENT', 12, 1, 6, 15, 4, 'UNDER_APPROVAL');
+       ('MOVEMENT', 12, 1, 5, 15, 4, 'UNDER_APPROVAL');
 
 INSERT INTO coordinations (movement_id, chief_user_id, status, comment, created_at)
 VALUES (26, 1, 'COORDINATED', null, '2023-02-12 01:22:26.377+03'),
-(27, 1, 'WAITING', null, '2023-02-17 21:20:58.5+03'),
-(28, 1, 'COORDINATED', null, '2023-02-18 01:04:28.082+03'),
-(28, 2, 'COORDINATED', null, '2023-02-18 01:04:16.717+03'),
-(28, 3, 'COORDINATED', null, '2023-02-18 01:01:34.942+03'),
-(26, 2, 'SENT', null, '2023-02-21 15:06:22.3+03'),
-(29, 3, 'WAITING', null, '2023-02-21 15:06:22.3+03');
+       (27, 1, 'WAITING', null, '2023-02-17 21:20:58.5+03'),
+       (28, 1, 'COORDINATED', null, '2023-02-18 01:04:28.082+03'),
+       (28, 2, 'COORDINATED', null, '2023-02-18 01:04:16.717+03'),
+       (28, 3, 'COORDINATED', null, '2023-02-18 01:01:34.942+03'),
+       (26, 2, 'SENT', null, '2023-02-21 15:06:22.3+03'),
+       (29, 3, 'WAITING', null, '2023-02-21 15:06:22.3+03');
 
 COMMIT;

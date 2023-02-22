@@ -53,12 +53,16 @@ public class ItemService {
     return itemRepository.findByPrefixAndNumber(prefix, number);
   }
 
-  public Optional<Item> getLastInCategory(int categoryId) {
-    return itemRepository.findTopByCategoryIdOrderByIdDesc(categoryId);
-  }
-
   @Transactional
   public Item create(Item item, User user) {
+    item.setTitle(item.getTitle().trim());
+
+    if (item.getPrefix() == null) {
+      item.setPrefix("");
+    } else {
+      item.setPrefix(item.getPrefix().trim());
+    }
+
     item = itemRepository.save(item);
 
     Movement movement = new Movement(Movement.Type.MOVEMENT, item.getId(), item.getQuantity(), item.getLocationId(), user.getId(), Movement.Status.SUCCESS);
@@ -69,6 +73,14 @@ public class ItemService {
   }
 
   public Item update(Item item) {
+    item.setTitle(item.getTitle().trim());
+
+    if (item.getPrefix() == null) {
+      item.setPrefix("");
+    } else {
+      item.setPrefix(item.getPrefix().trim());
+    }
+
     return itemRepository.save(item);
   }
 

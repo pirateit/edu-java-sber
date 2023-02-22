@@ -396,9 +396,10 @@ public class SettingControllerTest {
   }
 
   @Test
+  @DisplayName("Удаление локации, имеющей подразделения или предметы")
   @WithUserDetails("admin@example.com")
   void deleteLocationWithoutNestedByAdmin() throws Exception {
-    this.mvc.perform(get("/settings/locations/{id}/delete", 15))
+    this.mvc.perform(get("/settings/locations/{id}/delete", 18))
       .andExpect(status().is3xxRedirection());
   }
 

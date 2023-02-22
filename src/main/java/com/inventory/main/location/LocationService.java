@@ -5,7 +5,6 @@ import com.inventory.main.user.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.*;
 
 @Service
@@ -23,64 +22,60 @@ public class LocationService {
     return this.locationRepository.findById(locationId);
   }
 
-  public Optional<Location> getByTitle(String locationTitle) {
-    return this.locationRepository.findByTitle(locationTitle);
-  }
-
-  public Set<Location> getAll() {
-    return locationRepository.findAll();
-  }
-
   public Set<Location> getAllActive() {
-    return locationRepository.findAll();
+    return this.locationRepository.findAllByDeletedAtIsNull();
+  }
+
+  public Set<Location> getAllInactive() {
+    return this.locationRepository.findAllByDeletedAtIsNotNull();
   }
 
   public Set<Location> getParents() {
-    return locationRepository.findAllByParentIdIsNullOrderByIdAsc();
+    return this.locationRepository.findAllByParentIdIsNullAndDeletedAtIsNullOrderByIdAsc();
   }
 
   public Set<Location> getUserLocations(int userId) {
-    Set<Location> responsibleUserLocations = locationRepository.findByResponsibleUserId(userId);
+    Set<Location> responsibleUserLocations = this.locationRepository.findByResponsibleUserId(userId);
     Set<Location> userLocations = new HashSet<>();
 
     if (responsibleUserLocations.isEmpty()) {
-      Optional<User> user = userRepository.findById(userId);
-      Optional<Location> userLocation = locationRepository.findById(user.get().getLocationId());
+      Optional<User> user = this.userRepository.findById(userId);
+      Optional<Location> userLocation = this.locationRepository.findById(user.get().getLocationId());
 
       return Collections.singleton(userLocation.get());
     }
 
-    responsibleUserLocations.forEach(location -> userLocations.addAll(locationRepository.findChildrenById(location.getId())));
+    responsibleUserLocations.forEach(location -> userLocations.addAll(this.locationRepository.findChildrenById(location.getId())));
 
     return userLocations;
   }
 
   public Location create(Location location) {
     if (location.getParentId() != null) {
-      location.setDepth(location.getParent().getDepth() + 1);
+      Location parent = this.locationRepository.findById(location.getParentId()).get();
+
+      location.setDepth(parent.getDepth() + 1);
     }
 
     location.setTitle(location.getTitle().trim());
 
-    return locationRepository.save(location);
+    return this.locationRepository.save(location);
   }
 
   public Location update(Location location, Location newLocation) {
     location.setTitle(newLocation.getTitle());
-    location.setParentId(newLocation.getParentId());
     location.setResponsibleUserId(newLocation.getResponsibleUserId());
 
-    return locationRepository.save(location);
+    return this.locationRepository.save(location);
   }
 
-  @Transactional
   public void delete(int locationId) {
-    locationRepository.deleteById(locationId);
+    this.locationRepository.deleteById(locationId);
   }
 
   @Transactional
   public void restore(int locationId) {
-    locationRepository.restoreById(locationId);
+    this.locationRepository.restoreById(locationId);
   }
 
 }

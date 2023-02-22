@@ -123,8 +123,6 @@ public class ItemController extends MainController {
       return "items/create";
     }
 
-    item.setTitle(item.getTitle().trim());
-
     itemService.create(item, user);
 
     return "redirect:/items";
@@ -149,7 +147,7 @@ public class ItemController extends MainController {
 
     Optional<Movement> activeMovement = movementService.getActiveByItemId(id);
 
-    String inventoryNumber = item.get().getPrefix().length() != 0 ? item.get().getPrefix() + "-" + item.get().getNumber() : item.get().getNumber().toString();
+    String inventoryNumber = item.get().getPrefix() == null || item.get().getPrefix().length() == 0 ? item.get().getNumber().toString() : item.get().getPrefix() + "-" + item.get().getNumber();
 
     model.addAttribute("item", item.get());
     model.addAttribute("canMove", activeMovement.isEmpty());
@@ -274,7 +272,7 @@ public class ItemController extends MainController {
     // TODO: новый объект не создаётся, а берётся из БД
     movement.setId(null);
 
-    if (request.isUserInRole(User.Role.OWNER.name()) || request.isUserInRole(User.Role.ADMIN.name())) {
+    if (request.isUserInRole(User.Role.OWNER.name()) || request.isUserInRole(User.Role.ADMIN.name()) || user.getLocation().getDepth() == null) {
       movementService.createWithoutCoordination(movement, item.get(), user);
     } else {
       movementService.createWithCoordination(movement, item.get(), user);
