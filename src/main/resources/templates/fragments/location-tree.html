@@ -1,7 +1,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
   <div th:fragment="parent (loc)" th:unless="${loc == null}" th:remove="tag">
     <a th:href="@{/settings/locations/{id}(id=${loc.id})}" th:text="${loc.title}"></a>
-    <span th:if="${loc.parentId != null}"> &larr; </span>
+    <span th:if="${loc.parentId != null}">&nbsp;&larr;&nbsp;</span>
     <section:block th:if="${loc.parentId != null}" th:replace="fragments/location-tree :: parent (loc=${loc.parent})" th:remove="tag"></section:block>
   </div>
 </html>

@@ -1,5 +1,3 @@
-BEGIN;
-
 CREATE TABLE IF NOT EXISTS locations
 (
   id                  serial PRIMARY KEY,
@@ -40,7 +38,7 @@ CREATE TABLE IF NOT EXISTS items
   prefix      varchar(4)            DEFAULT '',
   number      bigint       NOT NULL,
   title       varchar(255) NOT NULL,
-  quantity    int          NOT NULL,
+  quantity    int          NOT NULL CHECK (quantity >= 0),
   category_id int          NOT NULL,
   location_id int          NOT NULL,
   created_at  timestamptz  NOT NULL DEFAULT NOW(),
@@ -53,7 +51,7 @@ CREATE TABLE IF NOT EXISTS movements
   id                serial PRIMARY KEY,
   type              varchar(35) NOT NULL,
   item_id           int         NOT NULL,
-  quantity          int         NOT NULL,
+  quantity          int         NOT NULL CHECK (quantity >= 0),
   location_from_id  int,
   location_to_id    int,
   requested_user_id int         NOT NULL,
@@ -99,5 +97,3 @@ ALTER TABLE coordinations
   ADD CONSTRAINT movement_id FOREIGN KEY (movement_id) REFERENCES movements (id);
 ALTER TABLE coordinations
   ADD CONSTRAINT chief_user_id FOREIGN KEY (chief_user_id) REFERENCES users (id);
-
-COMMIT;

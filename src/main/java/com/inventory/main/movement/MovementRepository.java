@@ -45,17 +45,17 @@ public interface MovementRepository extends CrudRepository<Movement, Integer> {
   );
 
   @Query(value = "SELECT * FROM movements " +
-    "LEFT OUTER JOIN (SELECT * FROM coordinations ORDER BY created_at) cds ON cds.movement_id = movements.id " +
+    "LEFT OUTER JOIN (SELECT DISTINCT ON (movement_id) * FROM coordinations ORDER BY movement_id, created_at DESC) cds ON cds.movement_id = movements.id " +
     "LEFT OUTER JOIN locations ON locations.id = movements.location_to_id " +
-    "WHERE ((movements.requested_user_id = :userId AND cds.status = 'COORDINATED') " +
+    "WHERE ((movements.requested_user_id = :userId AND movements.status = 'APPROVED') " +
     "OR (cds.chief_user_id = :userId AND cds.status = 'WAITING') " +
     "OR (locations.responsible_user_id = :userId AND cds.status = 'SENT')) " +
     "AND movements.status IN ('UNDER_APPROVAL', 'APPROVED', 'SENT') " +
     "ORDER BY movements.id DESC",
     countQuery = "SELECT * FROM movements " +
-      "LEFT OUTER JOIN (SELECT * FROM coordinations ORDER BY created_at) cds ON cds.movement_id = movements.id " +
+      "LEFT OUTER JOIN (SELECT DISTINCT ON (movement_id) * FROM coordinations ORDER BY movement_id, created_at DESC) cds ON cds.movement_id = movements.id " +
       "LEFT OUTER JOIN locations ON locations.id = movements.location_to_id " +
-      "WHERE ((movements.requested_user_id = :userId AND cds.status = 'COORDINATED') " +
+      "WHERE ((movements.requested_user_id = :userId AND movements.status = 'APPROVED') " +
       "OR (cds.chief_user_id = :userId AND cds.status = 'WAITING') " +
       "OR (locations.responsible_user_id = :userId AND cds.status = 'SENT')) " +
       "AND movements.status IN ('UNDER_APPROVAL', 'APPROVED', 'SENT')", nativeQuery = true)
@@ -65,10 +65,10 @@ public interface MovementRepository extends CrudRepository<Movement, Integer> {
 
   Set<Movement> findAllByItemId(int ItemId);
 
-  @Query(value = "SELECT COUNT(DISTINCT movements.id) FROM movements " +
-    "LEFT OUTER JOIN (SELECT * FROM coordinations ORDER BY created_at) cds ON cds.movement_id = movements.id " +
+  @Query(value = "SELECT COUNT(*) FROM movements " +
+    "LEFT OUTER JOIN (SELECT DISTINCT ON (movement_id) * FROM coordinations ORDER BY movement_id, created_at DESC) cds ON cds.movement_id = movements.id " +
     "LEFT OUTER JOIN locations ON locations.id = movements.location_to_id " +
-    "WHERE ((movements.requested_user_id = :userId AND cds.status = 'COORDINATED') " +
+    "WHERE ((movements.requested_user_id = :userId AND movements.status = 'APPROVED') " +
     "OR (cds.chief_user_id = :userId AND cds.status = 'WAITING') " +
     "OR (locations.responsible_user_id = :userId AND cds.status = 'SENT')) " +
     "AND movements.status IN ('UNDER_APPROVAL', 'APPROVED', 'SENT')", nativeQuery = true)

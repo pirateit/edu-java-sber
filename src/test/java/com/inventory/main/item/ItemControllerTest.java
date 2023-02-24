@@ -1,8 +1,6 @@
 package com.inventory.main.item;
 
-import com.inventory.main.movement.Coordination;
 import com.inventory.main.movement.Movement;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -19,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Sql({"/import.sql"})
+@Sql({"/tests.sql"})
 public class ItemControllerTest {
 
   @Autowired

@@ -32,16 +32,14 @@ public interface LocationRepository extends CrudRepository<Location, Integer> {
     ") SELECT * FROM rectree WHERE deleted_at IS NULL;", nativeQuery = true)
   Iterable<Location> findParentsById(@Param("id") Integer id);
 
-  @Query(value = "WITH RECURSIVE rectree AS (" +
-    "SELECT * " +
-    "FROM locations " +
-    "WHERE id = :id " +
-    "UNION ALL " +
-    "SELECT t.* " +
-    "FROM locations t " +
-    "JOIN rectree " +
-    "ON t.parent_id = rectree.id" +
-    ") SELECT * FROM rectree WHERE deleted_at IS NULL;", nativeQuery = true)
+  @Query(value = "" +
+    "WITH RECURSIVE rectree AS (" +
+    "   SELECT * FROM locations WHERE id = :id " +
+    "   UNION ALL " +
+    "   SELECT t.* " +
+    "   FROM locations t " +
+    "   JOIN rectree ON t.parent_id = rectree.id) " +
+    "SELECT * FROM rectree WHERE deleted_at IS NULL;", nativeQuery = true)
   Set<Location> findChildrenById(@Param("id") Integer id);
 
   @Query(value = "WITH RECURSIVE rectree AS (" +

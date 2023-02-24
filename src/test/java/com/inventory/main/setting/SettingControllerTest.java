@@ -1,11 +1,6 @@
 package com.inventory.main.setting;
 
-import com.inventory.main.category.Category;
-import com.inventory.main.category.CategoryService;
-import com.inventory.main.location.Location;
-import com.inventory.main.location.LocationService;
 import com.inventory.main.user.User;
-import com.inventory.main.user.UserService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -24,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Sql({"/import.sql"})
+@Sql({"/tests.sql"})
 public class SettingControllerTest {
 
   @Autowired

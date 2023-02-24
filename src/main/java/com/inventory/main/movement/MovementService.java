@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 @Service
@@ -114,7 +115,11 @@ public class MovementService {
     movement.setRequestedUserId(user.getId());
     movement.setStatus(Movement.Status.SUCCESS);
 
-    if (movement.getType() == Movement.Type.WRITE_OFF) {
+    if (item.getQuantity() - movement.getQuantity() > 0 && movement.getType() == Movement.Type.WRITE_OFF) {
+      movement.setLocationToId(null);
+      item.setQuantity(item.getQuantity() - movement.getQuantity());
+    } else if (movement.getType() == Movement.Type.WRITE_OFF) {
+      item.setDeletedAt(new Timestamp(new Date().getTime()));
       movement.setLocationToId(null);
     } else {
       item.setLocationId(movement.getLocationToId());

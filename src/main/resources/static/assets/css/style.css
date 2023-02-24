@@ -421,7 +421,7 @@ textarea {
 }
 
 .main__subheader {
-  margin-bottom: var(--m-1);
+  margin-bottom: var(--m-2);
 }
 
 .filter {
@@ -490,7 +490,7 @@ textarea {
 }
 
 .main__2col-col:first-child {
-  margin-right: var(--m-2);
+  margin-right: var(--m-3);
 }
 
 .item__form-row-num {
