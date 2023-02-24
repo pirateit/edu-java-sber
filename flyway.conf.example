@@ -1,0 +1,3 @@
+flyway.url=jdbc: <-- your connection url string
+flyway.user=postgres
+flyway.password=postgres
